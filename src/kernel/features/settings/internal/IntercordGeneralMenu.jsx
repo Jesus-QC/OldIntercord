@@ -2,7 +2,6 @@ import SettingListSectionsBuilder from "../builders/SettingListSectionsBuilder";
 import CommonComponents from "../../react/components/CommonComponents";
 import SettingsMenuManager from "../SettingsMenuManager";
 import RowBuilder from "../builders/SettingRowBuilder";
-import AssetManager from "../../assets/AssetManager";
 
 export default function IntercordGeneralMenu() {
     return (
@@ -13,49 +12,82 @@ export default function IntercordGeneralMenu() {
 }
 
 function GeneralMenu() {
+    const [automaticUpdates, setAutomaticUpdates] = React.useState(true);
+    const [automaticPluginUpdates, setAutomaticPluginUpdates] = React.useState(true);
+    const [debugPluginsCrash, setDebugPluginsCrash] = React.useState(true);
+
     const SettingsList = CommonComponents.getComponentByName("SettingsList");
 
     const sections = new SettingListSectionsBuilder()
-        .withSection("General", "INTERCORD_GENERAL_GITHUB", "INTERCORD_GENERAL_DISCORD")
+        .withSection("General", "INTERCORD_GENERAL_GITHUB", "INTERCORD_GENERAL_DISCORD", "INTERCORD_GENERAL_SUPPORT")
+        .withSection("Updates", "INTERCORD_GENERAL_AUTOMATIC_UPDATES", "INTERCORD_GENERAL_AUTOMATIC_UPDATES_PLUGINS")
+        .withSection("Debug", "INTERCORD_GENERAL_PLUGINS_CRASH")
         .withSection("Stats", "INTERCORD_GENERAL_STATS_PLUGINS", "INTERCORD_GENERAL_STATS_THEMES")
         .build();
 
     return (
         <>
-            <GeneralMenuRowsUtils/>
+            <GeneralMenuRowUtils automaticUpdates={automaticUpdates} setAutomaticUpdates={setAutomaticUpdates} setAutomaticPluginUpdates={setAutomaticPluginUpdates} automaticPluginUpdates={automaticPluginUpdates} debugPluginsCrash={debugPluginsCrash} setDebugPluginsCrash={setDebugPluginsCrash}/>
             <SettingsList sections={sections} />
         </>
     );
 }
 
-function GeneralMenuRowsUtils({}){
+function GeneralMenuRowUtils({automaticUpdates, setAutomaticUpdates, setAutomaticPluginUpdates, automaticPluginUpdates, debugPluginsCrash, setDebugPluginsCrash}){
     // General
 
     SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_GITHUB", new RowBuilder("GitHub Repo")
-        .withPressable(() => ReactNative.Linking.openURL("https://github.com/Jesus-QC/Intercord"))
-        .withDescription(() => "Star us on GitHub!")
         .withIconName("img_account_sync_github_white")
+        .withDescription(() => "Star us on GitHub!")
+        .withPressable(() => ReactNative.Linking.openURL("https://github.com/Jesus-QC/Intercord"))
         .useArrow()
     )
 
     SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_DISCORD", new RowBuilder("Discord Server")
-        .withPressable(() => ReactNative.Linking.openURL("https://discord.gg/8CeUM3dq9w"))
-        .withDescription(() => "Join our Discord server!")
         .withIconName("ic_custom_app_icons_24px")
+        .withDescription(() => "Join our Discord server!")
+        .withPressable(() => ReactNative.Linking.openURL("https://discord.gg/8CeUM3dq9w"))
         .useArrow()
+    )
+
+    SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_SUPPORT", new RowBuilder("Support the project!")
+        .withIconName("SuperReactionIcon")
+        .withDescription(() => "Support the project by donating!")
+        .withPressable(() => ReactNative.Linking.openURL("https://github.com/sponsors/Jesus-QC"))
+        .useArrow()
+    )
+
+    // Updates Settings
+
+    SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_AUTOMATIC_UPDATES", new RowBuilder("Update Automatically")
+        .withIconName("DownloadIcon")
+        .withDescription(() => "Whether or not Intercord should be updated automatically.")
+        .withToggle(setAutomaticUpdates, () => automaticUpdates)
+    )
+
+    SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_AUTOMATIC_UPDATES_PLUGINS", new RowBuilder("Update Plugins Automatically")
+        .withIconName("ic_upload")
+        .withDescription(() => "Whether or not plugins should be updated automatically.")
+        .withToggle(setAutomaticPluginUpdates, () => automaticPluginUpdates)
+    )
+
+    // Debug Settings
+
+    SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_PLUGINS_CRASH", new RowBuilder("Disable Plugins on Crash")
+        .withIconName("ShieldIcon")
+        .withDescription(() => "Whether or not Intercord should automatically disable all plugins when the app crashes.")
+        .withToggle(setDebugPluginsCrash, () => debugPluginsCrash)
     )
 
     // Stats
 
     SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_STATS_PLUGINS", new RowBuilder("Installed Plugins")
         .withIconName("PuzzlePieceIcon")
-        .withPressable(() => {})
         .withTrailing(() => "0")
     )
 
     SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_STATS_THEMES", new RowBuilder("Installed Themes")
         .withIconName("PaintPaletteIcon")
-        .withPressable(() => {})
         .withTrailing(() => "0")
     )
 }

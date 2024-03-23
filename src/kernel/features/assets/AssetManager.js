@@ -6,6 +6,7 @@ let assetManager = undefined;
 
 export default class AssetManager{
     static initialize(){
+        window.AssetManager = AssetManager;
         LazyModuleLoader.waitForModuleByProps((assetsModule) => {
             assetManager = assetsModule;
             InterPatcher.addPostfix(assetsModule, "registerAsset", (data) => {

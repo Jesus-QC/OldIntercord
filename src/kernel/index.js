@@ -1,15 +1,7 @@
-import ModuleLoader from "./features/modules/ModuleLoader";
-import CommonModules from "./features/modules/CommonModules";
-import AssetManager from "./features/assets/AssetManager";
-import SettingsMenuManager from "./features/settings/SettingsMenuManager";
-import CommonComponents from "./features/react/components/CommonComponents";
 import LazyModuleLoader from "./features/modules/LazyModuleLoader";
+import IntercordLoader from "./features/loader/IntercordLoader";
 
-ModuleLoader.initialize();
-CommonModules.initialize();
-CommonComponents.initialize();
-AssetManager.initialize();
-SettingsMenuManager.initialize();
+IntercordLoader.initialize();
 
 LazyModuleLoader.waitForStores((userStore, experimentStore) => {
     enableExperiments(userStore.getCurrentUser(), experimentStore.getSerializedState(), window.FluxDispatcher);

@@ -2,6 +2,9 @@ import LazyModuleLoader from "../modules/LazyModuleLoader";
 import ModuleSearcher from "../modules/ModuleSearcher";
 import InterPatcher from "../patcher/InterPatcher";
 import LoadIntercordSettingsMenu from "./internal/IntercordSettingsManager";
+import SettingListBuilder from "./builders/SettingListBuilder";
+import SettingRowBuilder from "./builders/SettingRowBuilder";
+import SettingListSectionsBuilder from "./builders/SettingListSectionsBuilder";
 
 // All the available setting rows
 const settingRows = {};
@@ -12,6 +15,11 @@ const settingList = [];
 let settingListRenderer = undefined;
 
 export default class SettingsMenuManager {
+    // We expose the builders to the outside world for our lovely developers
+    static CreateSettingListBuilder(...args){ return new SettingListBuilder(...args); }
+    static CreateSettingRowBuilder(...args){ return new SettingRowBuilder(...args); }
+    static CreateSettingListSectionsBuilder(...args){ return new SettingListSectionsBuilder(...args); }
+
     static addSettingRow(setting, rowBuilder){
         settingRows[setting] = rowBuilder;
         // If the renderer is already loaded, we refresh it
