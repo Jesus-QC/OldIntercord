@@ -21,7 +21,7 @@ function GeneralMenu() {
     const sections = new SettingListSectionsBuilder()
         .withSection("General", "INTERCORD_GENERAL_GITHUB", "INTERCORD_GENERAL_DISCORD", "INTERCORD_GENERAL_SUPPORT")
         .withSection("Updates", "INTERCORD_GENERAL_AUTOMATIC_UPDATES", "INTERCORD_GENERAL_AUTOMATIC_UPDATES_PLUGINS")
-        .withSection("Debug", "INTERCORD_GENERAL_PLUGINS_CRASH")
+        .withSection("Debug", "INTERCORD_GENERAL_PLUGINS_CRASH", "INTERCORD_GENERAL_EXIT", "INTERCORD_GENERAL_RESTART")
         .withSection("Stats", "INTERCORD_GENERAL_STATS_PLUGINS", "INTERCORD_GENERAL_STATS_THEMES")
         .build();
 
@@ -77,6 +77,18 @@ function GeneralMenuRowUtils({automaticUpdates, setAutomaticUpdates, setAutomati
         .withIconName("ShieldIcon")
         .withDescription(() => "Whether or not Intercord should automatically disable all plugins when the app crashes.")
         .withToggle(setDebugPluginsCrash, () => debugPluginsCrash)
+    )
+
+    SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_EXIT", new RowBuilder("Close Discord")
+        .withIconName("HandRequestSpeakIcon")
+        .withDescription(() => "Closes the application.")
+        .withPressable(() => ReactNative.BackHandler.exitApp())
+    )
+
+    SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_RESTART", new RowBuilder("Restart Discord")
+        .withIconName("WarningIcon")
+        .withDescription(() => "Restarts the application.")
+        .withPressable(() => ReactNative.NativeModules.BundleUpdaterManager.reload())
     )
 
     // Stats
