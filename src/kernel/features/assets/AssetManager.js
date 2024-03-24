@@ -23,7 +23,11 @@ export default class AssetManager{
         return assetManager.getAssetByID(id);
     }
 
-    static getAllAssetNames(){
+    static getAllAssetNames() {
         return assetsByName.keys();
+    }
+
+    static getAssetCount(){
+        return assetsByName.size;
     }
 }

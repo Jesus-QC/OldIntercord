@@ -2,8 +2,10 @@ import CommonComponents from "../../react/components/CommonComponents";
 import SettingListSectionsBuilder from "../builders/SettingListSectionsBuilder";
 import SettingsMenuManager from "../SettingsMenuManager";
 import RowBuilder from "../builders/SettingRowBuilder";
-import AssetManager from "../../assets/AssetManager";
 import IntercordConstants from "../../loader/IntercordConstants";
+import IntercordAssetManagerMenu from "./developer/IntercordAssetManagerMenu";
+import IntercordDevToolsMenu from "./developer/IntercordDevToolsMenu";
+import ToastManager from "../../react/ToastManager";
 
 export default function IntercordAdvancedMenu() {
     return (
@@ -13,22 +15,17 @@ export default function IntercordAdvancedMenu() {
     )
 }
 
+export function RegisterAdvancedMenuRoutes(){
+    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_DEVTOOLS", new RowBuilder("Dev Tools").withIconName("StaffBadgeIcon").withRoute("Intercord Advanced DevTools", IntercordDevToolsMenu))
+    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_ASSET_MANAGER", new RowBuilder("Asset Manager").withIconName("PaintPaletteIcon").withRoute("Intercord Advanced Asset Manager", IntercordAssetManagerMenu))
+}
+
 function AdvancedMenu(){
     const SettingsList = CommonComponents.getComponentByName("SettingsList");
 
-    const icons = [];
-    for (const icon of AssetManager.getAllAssetNames()){
-        SettingsMenuManager.addSettingRow(icon, new RowBuilder(icon)
-            .withIconName(icon)
-            .withPressable(() => {})
-            .useArrow()
-        )
-        icons.push(icon);
-    }
-
     const sections = new SettingListSectionsBuilder()
         .withSection("Information", "INTERCORD_ADVANCED_VERSION")
-        .withSection("Informatione", ...icons)
+        .withSection("Tools", "INTERCORD_ADVANCED_DEVTOOLS", "INTERCORD_ADVANCED_ASSET_MANAGER", "INTERCORD_ADVANCED_COPY_INFO")
         .build();
 
     return (
@@ -41,9 +38,17 @@ function AdvancedMenu(){
 
 function AdvancedMenuRowUtils(){
     // Information
-
     SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_VERSION", new RowBuilder("Version")
         .withIconName("SettingsIcon")
-        .withTrailing(() => "0.0.0.0")
+        .withTrailing(() => IntercordConstants.version)
+    )
+
+    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_COPY_INFO", new RowBuilder("Copy Information")
+        .withIconName("ic_info_24px")
+        .withPressable(() => {
+            ReactNative.Clipboard.setString("Todo");
+            ToastManager.info("Information copied to clipboard")
+        })
+        .useArrow()
     )
 }

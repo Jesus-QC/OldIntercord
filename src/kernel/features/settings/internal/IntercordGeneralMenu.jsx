@@ -12,6 +12,7 @@ export default function IntercordGeneralMenu() {
 }
 
 function GeneralMenu() {
+    // Todo: Add functionality to the settings
     const [automaticUpdates, setAutomaticUpdates] = React.useState(true);
     const [automaticPluginUpdates, setAutomaticPluginUpdates] = React.useState(true);
     const [debugPluginsCrash, setDebugPluginsCrash] = React.useState(true);
