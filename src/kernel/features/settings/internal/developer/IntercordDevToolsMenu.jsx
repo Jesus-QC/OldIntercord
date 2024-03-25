@@ -84,7 +84,7 @@ function ReactDevTools(){
     function buttonPressed(){
         if (!connected) {
             setConnected(true);
-            // TODO: Backend Connect
+            window.ReactDevToolsBackend.connectToDevTools({port: 8097, host: '10.0.2.2', useHttps: false});
         } else {
             AlertModalManager.openAlert("react-dev-tools", <RestartNeededAlertModal />)
         }

@@ -14,19 +14,22 @@ window.Object.create = objectCreateOverride;
 
 function objectCreateOverride(...params){
     // We apply the default implementation
-    let newObj = createObjectDefault.apply(window.Object, params);
+    let defaultObjectCreate = createObjectDefault.apply(window.Object, params);
 
     // And now we can check if the object is null and hook our modules to it
     if (params[0] !== null){
-        return newObj;
+        return defaultObjectCreate;
     }
 
     // We can save the native modules so that the framework can use them later
-    window.__nativeModules = newObj;
+    window.__nativeModules = defaultObjectCreate;
 
     // We finally restore the default implementation
     window.Object.create = createObjectDefault;
 
+    // We can now call some functions such as enabling react dev tools
+    if (window.enableDevTools) window.enableDevTools();
+
     // And we just return the native modules as if nothing happened ;)
-    return newObj;
+    return defaultObjectCreate;
 }
