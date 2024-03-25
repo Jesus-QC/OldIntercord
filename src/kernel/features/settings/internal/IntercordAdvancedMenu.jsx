@@ -16,7 +16,7 @@ export default function IntercordAdvancedMenu() {
 }
 
 export function RegisterAdvancedMenuRoutes(){
-    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_DEVTOOLS", new RowBuilder("Dev Tools").withIconName("StaffBadgeIcon").withRoute("Intercord Advanced DevTools", IntercordDevToolsMenu))
+    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_DEVTOOLS", new RowBuilder("Dev Tools").withIconName("ic_badge_staff").withRoute("Intercord Advanced DevTools", IntercordDevToolsMenu))
     SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_ASSET_MANAGER", new RowBuilder("Asset Manager").withIconName("PaintPaletteIcon").withRoute("Intercord Advanced Asset Manager", IntercordAssetManagerMenu))
 }
 

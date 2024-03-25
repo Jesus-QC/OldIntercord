@@ -8,6 +8,8 @@ import CommonComponents from '../react/components/CommonComponents';
 import SettingsMenuManager from '../settings/SettingsMenuManager';
 import AssetManager from "../assets/AssetManager";
 import ToastManager from "../react/ToastManager";
+import FileManager from "../files/FileManager";
+import SettingsManager from "../files/SettingsManager";
 
 export default class IntercordLoader {
     static initialize(){
@@ -23,6 +25,8 @@ export default class IntercordLoader {
         window.CommonComponents = CommonComponents;
         window.SettingsMenuManager = SettingsMenuManager;
         window.ToastManager = ToastManager;
+        window.FileManager = FileManager;
+        window.SettingsManager = SettingsManager;
 
         IntercordConstants.initialize()
         ModuleLoader.initialize();

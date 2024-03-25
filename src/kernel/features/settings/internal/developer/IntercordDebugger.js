@@ -1,5 +1,4 @@
 // Simple class to handle the debugger
-import ToastManager from "../../../react/ToastManager";
 
 export default class IntercordDebugger{
     static subscribe(onStatusUpdate){
@@ -23,8 +22,8 @@ export default class IntercordDebugger{
     static onMessage(msg){
         try{
             const data = msg.data; // We get the raw data
-            const response = (69, eval)(data); // We evaluate the data in the global context
-            if (response === undefined) return; // If the response is undefined we don't send it
+            let response = (69, eval)(data); // We evaluate the data in the global context
+            if (response === undefined || response === null) response = typeof response; // If the response is undefined or null we just send the type
             IntercordDebugger.socket.send(response.toString()); // We send the response
         } catch (e){
             IntercordDebugger.socket.send(e.toString()); // We send the error

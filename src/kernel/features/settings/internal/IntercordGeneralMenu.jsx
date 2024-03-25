@@ -2,6 +2,7 @@ import SettingListSectionsBuilder from "../builders/SettingListSectionsBuilder";
 import CommonComponents from "../../react/components/CommonComponents";
 import SettingsMenuManager from "../SettingsMenuManager";
 import RowBuilder from "../builders/SettingRowBuilder";
+import {useSetting} from "../../react/components/componentUtils";
 
 export default function IntercordGeneralMenu() {
     return (
@@ -13,9 +14,9 @@ export default function IntercordGeneralMenu() {
 
 function GeneralMenu() {
     // Todo: Add functionality to the settings
-    const [automaticUpdates, setAutomaticUpdates] = React.useState(true);
-    const [automaticPluginUpdates, setAutomaticPluginUpdates] = React.useState(true);
-    const [debugPluginsCrash, setDebugPluginsCrash] = React.useState(true);
+    const [automaticUpdates, setAutomaticUpdates] = useSetting("intercord", "automaticUpdates", true)
+    const [automaticPluginUpdates, setAutomaticPluginUpdates] = useSetting("intercord", "automaticPluginUpdates", true)
+    const [debugPluginsCrash, setDebugPluginsCrash] = useSetting("intercord", "debugPluginsCrash", true)
 
     const SettingsList = CommonComponents.getComponentByName("SettingsList");
 

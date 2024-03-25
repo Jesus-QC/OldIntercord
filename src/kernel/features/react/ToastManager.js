@@ -18,11 +18,6 @@ export default class ToastManager{
         })
     }
 
-    // Lets you open a toast with a custom icon component
-    static openWithIconComponent(content, iconComponent){
-        FluxDispatcher.dispatch({type: "TOAST_OPEN", toastProps: {content: content, iconComponent: iconComponent, key: Math.random()}})
-    }
-
     // Closes the active toast
     static close(){
         FluxDispatcher.dispatch({
@@ -34,13 +29,5 @@ export default class ToastManager{
 
     static info(content){
         ToastManager.open(content, "ic_info_24px");
-    }
-
-    static warning(content){
-        ToastManager.open(content, "ic_warning_24px");
-    }
-
-    static error(content){
-        ToastManager.open(content, "WarningIcon")
     }
 }

@@ -23,7 +23,7 @@ function AssetManagerMenu(){
         const tempAssets = [];
         for (const assetName of AssetManager.getAllAssetNames()){
             const id = AssetManager.getAssetIdByName(assetName);
-            tempAssets.push(<TableRow key={id} label={assetName} subLabel={id} icon={useIcons ? <TableRowIcon source={id} /> : <ReactNative.Image source={id} style={{height: 32, width: 32}} />}/>);
+            tempAssets.push(<TableRow key={id} label={assetName} subLabel={id} icon={useIcons ? <TableRowIcon source={id} /> : <ReactNative.Image source={id} style={{height: 26, width: 26, padding: 8, margin: 3}} />}/>);
         }
         setAssets(tempAssets)
     }, [useIcons]);
