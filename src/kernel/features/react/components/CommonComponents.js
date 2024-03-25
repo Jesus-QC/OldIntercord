@@ -24,3 +24,5 @@ export default class CommonComponents {
         return componentLibrary[name];
     }
 }
+
+window.CommonComponents = CommonComponents;

@@ -185,3 +185,5 @@ export default class ModuleSearcher{
         return module => module?.getName !== undefined && typeof module?.getName === "function" && module?.getName() === name;
     }
 }
+
+window.ModuleSearcher = ModuleSearcher;

@@ -30,3 +30,5 @@ export default class SettingsManager{
         });
     }
 }
+
+window.SettingsManager = SettingsManager;

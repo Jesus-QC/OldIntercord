@@ -1,5 +1,6 @@
 import LazyModuleLoader from "./features/modules/LazyModuleLoader";
 import IntercordLoader from "./features/loader/IntercordLoader";
+import ModuleSearcher from "./features/modules/ModuleSearcher";
 
 IntercordLoader.initialize();
 
@@ -9,6 +10,11 @@ LazyModuleLoader.waitForStores((userStore, experimentStore) => {
 
 function enableExperiments(user, serializedState, dispatcher) {
     try {
+        const m = ModuleSearcher.findByProps("openAlert", "dismissAlert");
+        InterPatcher.addPrefix(m, "openAlert", (data) => {
+            console.log("openAlert was called with data:", data.args);
+        })
+
         // We add a flag to the user object to indicate that the user is staff
         user.flags += 1;
 

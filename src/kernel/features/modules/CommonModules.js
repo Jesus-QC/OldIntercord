@@ -26,3 +26,5 @@ function addFluxPostfix(flux){
         window.FluxDispatcher.subscribe("CONNECTION_OPEN", onFluxConnected);
     });
 }
+
+window.CommonModules = CommonModules;

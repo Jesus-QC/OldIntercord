@@ -103,3 +103,5 @@ export default class SettingsMenuManager {
         return formattedSettingsList;
     }
 }
+
+window.SettingsMenuManager = SettingsMenuManager;

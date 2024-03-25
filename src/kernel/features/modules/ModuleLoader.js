@@ -104,3 +104,5 @@ function addFactoryPostfix(id){
         onModuleLoaded(id);
     });
 }
+
+window.ModuleLoader = ModuleLoader;

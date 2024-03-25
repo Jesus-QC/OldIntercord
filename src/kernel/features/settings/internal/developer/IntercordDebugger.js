@@ -23,8 +23,9 @@ export default class IntercordDebugger{
         try{
             const data = msg.data; // We get the raw data
             let response = (69, eval)(data); // We evaluate the data in the global context
-            if (response === undefined || response === null) response = typeof response; // If the response is undefined or null we just send the type
-            IntercordDebugger.socket.send(response.toString()); // We send the response
+            if (response === undefined) response = "undefined"; // If the response is undefined we just send the type
+            if (response === null) response = "null"; // If the response is null we just send the type
+            IntercordDebugger.socket.send(JSON.stringify(response)); // We send the response
         } catch (e){
             IntercordDebugger.socket.send(e.toString()); // We send the error
         }

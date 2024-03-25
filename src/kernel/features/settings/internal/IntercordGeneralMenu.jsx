@@ -13,7 +13,6 @@ export default function IntercordGeneralMenu() {
 }
 
 function GeneralMenu() {
-    // Todo: Add functionality to the settings
     const [automaticUpdates, setAutomaticUpdates] = useSetting("intercord", "automaticUpdates", true)
     const [automaticPluginUpdates, setAutomaticPluginUpdates] = useSetting("intercord", "automaticPluginUpdates", true)
     const [debugPluginsCrash, setDebugPluginsCrash] = useSetting("intercord", "debugPluginsCrash", true)
@@ -95,6 +94,7 @@ function GeneralMenuRowUtils({automaticUpdates, setAutomaticUpdates, setAutomati
 
     // Stats
 
+    // TODO
     SettingsMenuManager.addSettingRow("INTERCORD_GENERAL_STATS_PLUGINS", new RowBuilder("Installed Plugins")
         .withIconName("PuzzlePieceIcon")
         .withTrailing(() => "0")

@@ -1,4 +1,5 @@
 import AssetManager from "../assets/AssetManager";
+import SettingsMenuManager from "../settings/SettingsMenuManager";
 
 export default class ToastManager{
     // Opens a toast with the given content and icon
@@ -31,3 +32,5 @@ export default class ToastManager{
         ToastManager.open(content, "ic_info_24px");
     }
 }
+
+window.ToastManager = ToastManager;

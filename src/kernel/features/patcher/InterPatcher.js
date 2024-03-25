@@ -91,3 +91,5 @@ export default class InterPatcher {
 function isFunctionOfObject(obj, name) {
     return typeof obj[name] === 'function';
 }
+
+window.InterPatcher = InterPatcher;

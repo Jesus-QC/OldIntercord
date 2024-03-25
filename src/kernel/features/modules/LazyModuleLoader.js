@@ -89,3 +89,5 @@ class StoreWaitingCallback {
         this.callback = callback;
     }
 }
+
+window.LazyModuleLoader = LazyModuleLoader;

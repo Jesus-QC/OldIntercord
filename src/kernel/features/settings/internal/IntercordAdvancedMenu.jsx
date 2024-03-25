@@ -38,7 +38,7 @@ function AdvancedMenu(){
 
 function AdvancedMenuRowUtils(){
     // Information
-    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_VERSION", new RowBuilder("Version")
+    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_VERSION", new RowBuilder("Intercord Version")
         .withIconName("SettingsIcon")
         .withTrailing(() => IntercordConstants.version)
     )
@@ -46,6 +46,7 @@ function AdvancedMenuRowUtils(){
     SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_COPY_INFO", new RowBuilder("Copy Information")
         .withIconName("ic_info_24px")
         .withPressable(() => {
+            // TODO
             ReactNative.Clipboard.setString("Todo");
             ToastManager.info("Information copied to clipboard")
         })

@@ -4,3 +4,5 @@ export default class IntercordConstants{
         IntercordConstants.version = "1.0.0.0";
     }
 }
+
+window.IntercordConstants = IntercordConstants;
