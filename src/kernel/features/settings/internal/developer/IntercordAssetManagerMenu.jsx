@@ -1,5 +1,6 @@
 import CommonComponents from "../../../react/components/CommonComponents";
 import AssetManager from "../../../assets/AssetManager";
+import InformationRow from "../../../react/components/InformationRow";
 
 export default function IntercordAssetManagerMenu() {
     return (
@@ -42,7 +43,7 @@ function AssetManagerMenu(){
 
     return (
         <>
-            <TableRow style={{margin: 16, padding: 0}} icon={<TableRowIcon source={AssetManager.getAssetIdByName("ic_info_24px")} />} start={true} end={true} label={"Information"} subLabel={"Asset IDs change every time the app is reloaded. Assets are lazy, which means they are only loaded when they are needed, therefore not all assets are shown here."} />
+            <InformationRow label={"Information"} subLabel={"Asset IDs change every time the app is reloaded. Assets are lazy, which means they are only loaded when they are needed, therefore not all assets are shown here."} />
             <ReactNative.View style={{marginRight: 16, marginLeft: 16}}>
                 <TextInput value={search} onChange={(val) => setSearch(val.toLowerCase())}  placeholder={"Search"} trailingIcon={ModuleSearcher.findByProps("MagnifyingGlassIcon").MagnifyingGlassIcon} />
             </ReactNative.View>
