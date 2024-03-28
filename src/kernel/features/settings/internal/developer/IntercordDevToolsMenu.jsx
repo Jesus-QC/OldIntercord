@@ -7,7 +7,7 @@ import {useSetting} from "../../../react/components/componentUtils";
 
 export default function IntercordDevToolsMenu() {
     return (
-        <ReactNative.ScrollView style={{padding: 16, marginBottom: 16}}>
+        <ReactNative.ScrollView style={{padding: 16, paddingBottom: 32}}>
             <DevToolsMenu/>
         </ReactNative.ScrollView>
     )
@@ -63,7 +63,7 @@ function ReactDevTools(){
 
     const [enabled, setEnabled] = useSetting("intercord", "reactDevToolsEnabled", false);
     const [address, setAddress] = React.useState("10.0.2.2:8097");
-    const [connected, setConnected] = React.useState(false);
+    const [connected, setConnected] = React.useState(reactDevToolsEnabled);
 
     function onSwitched(val){
         if (!val){
@@ -80,6 +80,7 @@ function ReactDevTools(){
     function buttonPressed(){
         if (!connected) {
             setConnected(true);
+            reactDevToolsEnabled = true;
             window.ReactDevToolsBackend.connectToDevTools({port: 8097, host: '10.0.2.2', useHttps: false});
         } else {
             AlertModalManager.openAlert("react-dev-tools", <RestartNeededAlertModal />)
@@ -91,9 +92,11 @@ function ReactDevTools(){
             <InformationRow style={{margin: 0}} label={"Enable React Dev Tools"} subLabel={"Whether or not React Dev Tools should be loaded when the app starts."} />
             <TableSwitchRow style={{marginTop: 16, padding: 2}} value={enabled} onValueChange={onSwitched} end={true} start={true} label={"Enable React Dev Tools"} subLabel={"Whether or not React Dev Tools should be loaded when the app starts."} />
             <Card style={{padding: 16, marginTop: 16, marginBottom: 32}}>
-                <TextInput isDisabled={!enabled} value={address} onChange={setAddress} label={"Dev Tools Address"} description={"Remember to append the port at the end of the address"} />
+                <TextInput isDisabled={!enabled || connected} value={address} onChange={setAddress} label={"Dev Tools Address"} description={"Remember to append the port at the end of the address"} />
                 <Button disabled={!enabled} style={{paddingTop: 16}} onPress={buttonPressed} text={connected ? "Disconnect" : "Connect"} variant={connected ? "destructive" : "primary"} />
             </Card>
         </>
     )
 }
+
+let reactDevToolsEnabled = false;

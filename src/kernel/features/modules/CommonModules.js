@@ -16,6 +16,11 @@ export default class CommonModules{
         LazyModuleLoader.waitForModuleByProps((reactNative) => {
             window.ReactNative = reactNative;
         }, "Text","TextInput");
+
+        LazyModuleLoader.waitForModuleByProps((colorWrapper) => {
+            window.ColorUtils = colorWrapper;
+            window.ColorUtils.getColorByName = (name) => ColorUtils.ColorDetails[name].hex;
+        }, "ColorDetails", "Color");
     }
 }
 
