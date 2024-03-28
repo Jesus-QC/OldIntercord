@@ -1,4 +1,4 @@
-import SettingListSectionsBuilder from "../builders/SettingListSectionsBuilder";
+import CustomSettingListBuilder from "../builders/CustomSettingListBuilder";
 import CommonComponents from "../../react/components/CommonComponents";
 import SettingsMenuManager from "../SettingsMenuManager";
 import RowBuilder from "../builders/SettingRowBuilder";
@@ -17,9 +17,7 @@ function GeneralMenu() {
     const [automaticPluginUpdates, setAutomaticPluginUpdates] = useSetting("intercord", "automaticPluginUpdates", true)
     const [debugPluginsCrash, setDebugPluginsCrash] = useSetting("intercord", "debugPluginsCrash", true)
 
-    const SettingsList = CommonComponents.getComponentByName("SettingsList");
-
-    const sections = new SettingListSectionsBuilder()
+    const settings = new CustomSettingListBuilder()
         .withSection("General", "INTERCORD_GENERAL_GITHUB", "INTERCORD_GENERAL_DISCORD", "INTERCORD_GENERAL_SUPPORT")
         .withSection("Updates", "INTERCORD_GENERAL_AUTOMATIC_UPDATES", "INTERCORD_GENERAL_AUTOMATIC_UPDATES_PLUGINS")
         .withSection("Debug", "INTERCORD_GENERAL_PLUGINS_CRASH", "INTERCORD_GENERAL_EXIT", "INTERCORD_GENERAL_RESTART")
@@ -29,7 +27,7 @@ function GeneralMenu() {
     return (
         <>
             <GeneralMenuRowUtils automaticUpdates={automaticUpdates} setAutomaticUpdates={setAutomaticUpdates} setAutomaticPluginUpdates={setAutomaticPluginUpdates} automaticPluginUpdates={automaticPluginUpdates} debugPluginsCrash={debugPluginsCrash} setDebugPluginsCrash={setDebugPluginsCrash}/>
-            <SettingsList sections={sections} />
+            {settings}
         </>
     );
 }

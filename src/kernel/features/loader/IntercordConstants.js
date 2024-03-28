@@ -8,7 +8,7 @@ export default class IntercordConstants{
         LazyModuleLoader.waitForModuleByProps((versionInfo) => {
             IntercordConstants.buildNumberLabel = versionInfo.getBuildNumberLabel();
             IntercordConstants.versionInfo = versionInfo.getConstants();
-            // versionInfo contains: "DeviceVendorID","SentryStaffDsn","OTABuild","ReleaseChannel","Manifest","SentryDsn","Build","Version","SentryAlphaBetaDsn","Identifier"
+            // versionInfo contains: "DeviceVendorID","SentryStaffDsn","OTABuild","ReleaseChannel","Manifest","SentryDsn","Build","Version","SentryAlphaBetaDsn","Identifier"...
         }, "getConstants", "getBuildNumberLabel")
     }
 }

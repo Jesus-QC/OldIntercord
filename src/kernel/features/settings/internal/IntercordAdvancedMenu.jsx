@@ -1,5 +1,5 @@
 import CommonComponents from "../../react/components/CommonComponents";
-import SettingListSectionsBuilder from "../builders/SettingListSectionsBuilder";
+import CustomSettingListBuilder from "../builders/CustomSettingListBuilder";
 import SettingsMenuManager from "../SettingsMenuManager";
 import RowBuilder from "../builders/SettingRowBuilder";
 import IntercordConstants from "../../loader/IntercordConstants";
@@ -21,18 +21,42 @@ export function RegisterAdvancedMenuRoutes(){
 }
 
 function AdvancedMenu(){
-    const SettingsList = CommonComponents.getComponentByName("SettingsList");
-
-    const sections = new SettingListSectionsBuilder()
+    const settings = new CustomSettingListBuilder()
         .withSection("Information", "INTERCORD_ADVANCED_VERSION", "INTERCORD_ADVANCED_VERSION_INJECTOR", "INTERCORD_ADVANCED_VERSION_DISCORD", "INTERCORD_ADVANCED_VERSION_REACT", "INTERCORD_ADVANCED_VERSION_REACT_NATIVE", "INTERCORD_ADVANCED_VERSION_HERMES")
         .withSection("Developer", "INTERCORD_ADVANCED_INFORMATION")
         .withSection("Tools", "INTERCORD_ADVANCED_DEVTOOLS", "INTERCORD_ADVANCED_ASSET_MANAGER", "INTERCORD_ADVANCED_COPY_INFO")
+        .withSection("Snippets", "INTERCORD_ADVANCED_SNIPPETS")
         .build();
 
     return (
         <>
             <AdvancedMenuRowUtils/>
-            <SettingsList sections={sections}/>
+            {settings}
+            <SnippetsPaster/>
+        </>
+    )
+}
+
+function SnippetsPaster(){
+    const Card = CommonComponents.getComponentByName("Card");
+    const TextInput = CommonComponents.getComponentByName("TextInput");
+    const Button = CommonComponents.getComponentByName("Button");
+
+    const [snippet, setSnippet] = React.useState("1+1");
+
+    return (
+        <>
+            <Card style={{padding: 16, margin: 16, marginBottom: 32, marginTop: 0}}>
+                <TextInput value={snippet} onChange={setSnippet} label={"Snippets"} description={"Unless you understand exactly what you are doing DO NOT PASTE ANYTHING HERE."} />
+                <Button style={{paddingTop: 16}} onPress={() => {
+                    try {
+                        ToastManager.info(IntercordLoader.executeCode(snippet));
+                    } catch (e){
+                        ToastManager.info("An error occurred while executing the snippet.");
+                        console.error(e);
+                    }
+                }} text={"Execute Snippet"} variant={"destructive"} />
+            </Card>
         </>
     )
 }
@@ -85,5 +109,10 @@ function AdvancedMenuRowUtils(){
     SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_INFORMATION", new RowBuilder("Developer Tools")
         .withIconName("ic_info_24px")
         .withDescription(() => "Those are a set of tools that are meant for developers to debug and test with Intercord, please be cautious when using them.")
+    )
+
+    SettingsMenuManager.addSettingRow("INTERCORD_ADVANCED_SNIPPETS", new RowBuilder("Snippets")
+        .withIconName("ic_info_24px")
+        .withDescription(() => "Here you can execute snippets.")
     )
 }

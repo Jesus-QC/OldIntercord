@@ -4,7 +4,7 @@ import InterPatcher from "../patcher/InterPatcher";
 import LoadIntercordSettingsMenu from "./internal/IntercordSettingsManager";
 import SettingListBuilder from "./builders/SettingListBuilder";
 import SettingRowBuilder from "./builders/SettingRowBuilder";
-import SettingListSectionsBuilder from "./builders/SettingListSectionsBuilder";
+import CustomSettingListBuilder from "./builders/CustomSettingListBuilder";
 
 // All the available setting rows
 const settingRows = {};
@@ -18,7 +18,7 @@ export default class SettingsMenuManager {
     // We expose the builders to the outside world for our lovely developers
     static CreateSettingListBuilder(...args){ return new SettingListBuilder(...args); }
     static CreateSettingRowBuilder(...args){ return new SettingRowBuilder(...args); }
-    static CreateSettingListSectionsBuilder(...args){ return new SettingListSectionsBuilder(...args); }
+    static CreateCustomSettingListBuilder(...args){ return new CustomSettingListBuilder(...args); }
 
     static addSettingRow(setting, rowBuilder){
         settingRows[setting] = rowBuilder;

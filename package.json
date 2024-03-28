@@ -4,7 +4,7 @@
   "description": "Intercord ",
   "main": "index.js",
   "scripts": {
-    "build-prod": "node builders/builder.mjs",
+    "build-prod": "node builders/kernel-builder.mjs",
     "build-bootstrap": "esbuild src/bootstrap/index.js --minify --outdir=out/bootstrap"
   },
   "keywords": [],

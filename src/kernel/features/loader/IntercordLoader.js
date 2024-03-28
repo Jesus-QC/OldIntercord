@@ -1,12 +1,10 @@
 import IntercordConstants from './IntercordConstants';
 import CommonModules from '../modules/CommonModules';
 import ModuleLoader from '../modules/ModuleLoader';
-import LazyModuleLoader from '../modules/LazyModuleLoader';
 import CommonComponents from '../react/components/CommonComponents';
 import SettingsMenuManager from '../settings/SettingsMenuManager';
 import AssetManager from "../assets/AssetManager";
-import SettingsManager from "../files/SettingsManager";
-import AlertModalManager from "../react/AlertModalManager";
+import IntercordPluginManager from "../plugins/IntercordPluginManager";
 
 export default class IntercordLoader {
     static initialize(){
@@ -16,6 +14,13 @@ export default class IntercordLoader {
         CommonComponents.initialize();
         AssetManager.initialize();
         SettingsMenuManager.initialize();
+        IntercordPluginManager.initialize();
+    }
+
+    // Evals code in the global context
+    static executeCode(code){
+        // ;)
+        return String((69, eval)(code));
     }
 }
 
