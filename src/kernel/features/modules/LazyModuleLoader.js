@@ -3,6 +3,7 @@ import ModuleLoader from "./ModuleLoader";
 
 const waitingCallbacks = new Set();
 const waitingStoreCallbacks = new Set();
+let fluxConnected = false;
 
 // To handle modules, we just wait for the module to load
 export function onModuleLoaded(id){
@@ -12,6 +13,7 @@ export function onModuleLoaded(id){
 // To handle stores, we just wait for flux to connect
 export function onFluxConnected(){
     FluxDispatcher.unsubscribe("CONNECTION_OPEN", onFluxConnected);
+    fluxConnected = true;
     waitingStoreCallbacks.forEach(callback => {
         callback.callback(...callback.stores.map(store => ModuleSearcher.findByStore(store)));
     });
@@ -49,7 +51,7 @@ export default class LazyModuleLoader {
 
     // Waits for stores to be loaded, can load multiple stores
     static waitForStores(callback, ...stores){
-        if (window.FluxDispatcher){
+        if (fluxConnected){
             return callback(...stores.map(store => ModuleSearcher.findByStore(store)));
         }
 

@@ -24,16 +24,34 @@ function RestartRequiredAlert(){
 let savedModifiedPlugins = [];
 
 function PluginsMenu(){
-    const [modifiedPlugins, setModifiedPlugins] = React.useState(savedModifiedPlugins);
     const Stack = CommonComponents.getComponentByName("Stack");
+    const TextInput = CommonComponents.getComponentByName("TextInput");
 
-    function onToggledPlugin(prefix){
-        if (modifiedPlugins.includes(prefix)){
-            savedModifiedPlugins = modifiedPlugins.filter((p) => p !== prefix);
-        } else {
-            savedModifiedPlugins = [...modifiedPlugins, prefix];
+    const [modifiedPlugins, setModifiedPlugins] = React.useState(savedModifiedPlugins);
+    const [plugins, setPlugins] = React.useState([]);
+    const [search, setSearch] = React.useState("");
+
+    React.useEffect(() => {
+        setPlugins(IntercordPluginManager.getPlugins().map((plugin) =>
+            <PluginCard plugin={plugin} onToggledPlugin={onToggledPlugin}/>
+        ))
+    }, []);
+
+    function getPlugins(){
+        const tempPlugins = [];
+        const searchLower = search.toLowerCase();
+
+        for (const plugin of plugins){
+            const data = plugin.props.plugin ? plugin.props.plugin : plugin.props.data;
+            if (JSON.stringify(data).toLowerCase().includes(searchLower)) tempPlugins.push(plugin);
         }
 
+        return tempPlugins;
+    }
+
+    function onToggledPlugin(prefix){
+        if (savedModifiedPlugins.includes(prefix)) savedModifiedPlugins = savedModifiedPlugins.filter((p) => p !== prefix);
+        else savedModifiedPlugins = [...savedModifiedPlugins, prefix];
         setModifiedPlugins(savedModifiedPlugins);
     }
 
@@ -41,12 +59,9 @@ function PluginsMenu(){
         <>
             {modifiedPlugins.length > 0 && <RestartRequiredAlert/>}
             <ReactNative.ScrollView style={{padding: 16}}>
-                <Stack spacing={12} style={{marginBottom: 32}}>
-                    {
-                        IntercordPluginManager.getPlugins().map((plugin) => {
-                            return <PluginCard plugin={plugin} onToggledPlugin={onToggledPlugin}/>
-                        })
-                    }
+                <TextInput value={search} onChange={setSearch}  placeholder={"Search"} trailingIcon={ModuleSearcher.findByProps("MagnifyingGlassIcon").MagnifyingGlassIcon} />
+                <Stack spacing={12} style={{marginBottom: 32, marginTop: 16}}>
+                    {getPlugins()}
                 </Stack>
             </ReactNative.ScrollView>
         </>
@@ -63,8 +78,14 @@ function PluginCard({plugin, onToggledPlugin}){
     const [enabled, setEnabled] = useSetting(plugin.prefix, "enabled", false);
 
     function onToggled(val){
+        if (plugin.requiresRestart === false){
+            if (val) IntercordPluginManager.loadPlugin(plugin.prefix);
+            else IntercordPluginManager.unloadPlugin(plugin.prefix);
+        } else{
+            onToggledPlugin(plugin.prefix);
+        }
+
         setEnabled(val);
-        onToggledPlugin(plugin.prefix);
     }
 
     return (

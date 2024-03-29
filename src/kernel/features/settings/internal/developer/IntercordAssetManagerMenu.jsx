@@ -31,9 +31,10 @@ function AssetManagerMenu(){
 
     function getAssets(){
         const tempAssets = [];
+        const searchLower = search.toLowerCase();
 
         for (const asset of assets){
-            if (asset.props.label.toLowerCase().includes(search)){
+            if (asset.props.label.toLowerCase().includes(searchLower)){
                 tempAssets.push(asset);
             }
         }
@@ -45,9 +46,9 @@ function AssetManagerMenu(){
         <>
             <InformationRow label={"Information"} subLabel={"Asset IDs change every time the app is reloaded. Assets are lazy, which means they are only loaded when they are needed, therefore not all assets are shown here."} />
             <ReactNative.View style={{marginRight: 16, marginLeft: 16}}>
-                <TextInput value={search} onChange={(val) => setSearch(val.toLowerCase())}  placeholder={"Search"} trailingIcon={ModuleSearcher.findByProps("MagnifyingGlassIcon").MagnifyingGlassIcon} />
+                <TextInput value={search} onChange={setSearch}  placeholder={"Search"} trailingIcon={ModuleSearcher.findByProps("MagnifyingGlassIcon").MagnifyingGlassIcon} />
             </ReactNative.View>
-            <TableSwitchRow style={{padding: 2, margin: 16}} value={useIcons} onValueChange={setUseIcons} end={true} start={true} label={"Use Icons"} subLabel={"Whether or not it should display non colored icons instead of the images."} />
+            <TableSwitchRow style={{padding: 2, margin: 16}} value={useIcons} onValueChange={setUseIcons} end={true} start={true} label={"Use Icons"} subLabel={"Whether or not it should display non colored icons instead of images."} />
             {getAssets()}
         </>
     )
