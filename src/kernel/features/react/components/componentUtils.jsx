@@ -14,3 +14,5 @@ export function useSetting(prefix, key, defaultValue){
         SettingsManager.set(prefix, key, value);
     }]
 }
+
+window.useSetting = useSetting;

@@ -1,6 +1,18 @@
 // Simple class to handle the debugger
 
+import SettingsManager from "../../../files/SettingsManager";
+
 export default class IntercordDebugger{
+    static initialize(){
+        SettingsManager.get("intercord", "debuggerEnabled", (value) => {
+            if (!value) return;
+            SettingsManager.get("intercord", "debuggerAddress", (address) => {
+                if (!address) return;
+                IntercordDebugger.connect(address);
+            })
+        });
+    }
+
     static subscribe(onStatusUpdate){
         IntercordDebugger.onStatusUpdate = onStatusUpdate;
     }

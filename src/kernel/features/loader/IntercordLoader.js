@@ -5,6 +5,7 @@ import CommonComponents from '../react/components/CommonComponents';
 import SettingsMenuManager from '../settings/SettingsMenuManager';
 import AssetManager from "../assets/AssetManager";
 import IntercordPluginManager from "../plugins/IntercordPluginManager";
+import IntercordDebugger from "../settings/internal/developer/IntercordDebugger";
 
 export default class IntercordLoader {
     static initialize(){
@@ -15,6 +16,7 @@ export default class IntercordLoader {
         AssetManager.initialize();
         SettingsMenuManager.initialize();
         IntercordPluginManager.initialize();
+        IntercordDebugger.initialize();
     }
 
     // Evals code in the global context

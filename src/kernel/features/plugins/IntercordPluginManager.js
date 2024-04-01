@@ -1,6 +1,7 @@
 import SettingsManager from "../files/SettingsManager";
 import ExperimentsPlugin from "./official/experiments/ExperimentsPlugin";
 import NsfwBypassPlugin from "./official/nsfw-bypass/NsfwBypassPlugin";
+import MessageLoggerPlugin from "./official/message-logger/MessageLoggerPlugin";
 
 export default class IntercordPluginManager{
     static initialize(){
@@ -57,7 +58,8 @@ export default class IntercordPluginManager{
 
 IntercordPluginManager.officialPluginList = new Set([
     new ExperimentsPlugin(),
-    new NsfwBypassPlugin()
+    new MessageLoggerPlugin(),
+    new NsfwBypassPlugin(),
 ]);
 
 IntercordPluginManager.enabledPlugins = new Map();

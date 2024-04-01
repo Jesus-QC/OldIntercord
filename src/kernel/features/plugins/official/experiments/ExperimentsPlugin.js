@@ -6,9 +6,7 @@ export default class ExperimentsPlugin{
         this.name = "Experiments";
         this.description = "Enables discord staff tools. Including experiments and other utilities."
         this.author = "@jesusqc"
-        this.version = '1.0.0.0';
-        this.repo = "https://github.com/Jesus-QC/Intercord"; // TODO
-        this.highlight = true;
+        this.repo = ""; // TODO
     }
 
     load(){
@@ -29,6 +27,8 @@ export default class ExperimentsPlugin{
                     node.actionHandler["OVERLAY_INITIALIZE"](event);
                 }
             }
+
+            this.requiresRestart = true;
         }, "ExperimentStore", "UserStore")
     }
 }

@@ -6,9 +6,7 @@ export default class NsfwBypassPlugin{
         this.name = "NSFW Bypass";
         this.description = "Bypasses NSFW restrictions on Discord."
         this.author = "@jesusqc"
-        this.version = '1.0.0.0';
-        this.repo = "https://github.com/Jesus-QC/Intercord"; // TODO
-        this.requiresRestart = false;
+        this.repo = ""; // TODO
     }
 
     load(){

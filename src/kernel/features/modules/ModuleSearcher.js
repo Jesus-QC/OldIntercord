@@ -70,6 +70,15 @@ export default class ModuleSearcher{
         return ModuleSearcher.getModuleIdWhere(ModuleSearcher.filterByStore(storeName));
     }
 
+    // Finds the first module that has the specified path
+    // This is so so so cool, like bro, you can find a module by its path, how cool is that
+    static findByPath(path){
+        return ModulePathManager.getModuleByPath(path) ?? null;
+    }
+    static findIdByPath(path){
+        return ModulePathManager.getModuleIdByPath(path);
+    }
+
     // Searchers
     // We grab the first module from the native modules that passes the filter
     static getModuleWhere(filter){
@@ -115,7 +124,7 @@ export default class ModuleSearcher{
             }
         }
 
-        for (const rawModule of window.__nativeModules) {
+        for (const rawModule in window.__nativeModules) {
             const module = ModuleLoader.getModuleById(Number(rawModule));
 
             if (!module) {
@@ -131,7 +140,7 @@ export default class ModuleSearcher{
 
     // Gets the module by its id
     static getModuleIdWhere(filter){
-        for (const rawModule of window.__nativeModules) {
+        for (const rawModule in window.__nativeModules) {
             const moduleId = Number(rawModule);
             const module = ModuleLoader.getModuleById(moduleId);
 

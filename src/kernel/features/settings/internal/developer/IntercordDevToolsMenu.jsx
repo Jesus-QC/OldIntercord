@@ -27,9 +27,11 @@ function Debugger(){
     const Card = CommonComponents.getComponentByName("Card");
     const TextInput = CommonComponents.getComponentByName("TextInput");
     const Button = CommonComponents.getComponentByName("Button");
+    const TableSwitchRow = CommonComponents.getComponentByName("TableSwitchRow");
 
-    const [address, setAddress] = React.useState(!IntercordDebugger.address ? "10.0.2.2:8080" : IntercordDebugger.address);
+    const [address, setAddress] = useSetting("intercord", "debuggerAddress", "10.0.2.2:8080");
     const [connected, setConnected] = React.useState(IntercordDebugger.connected);
+    const [enabled, setEnabled] = useSetting("intercord", "debuggerEnabled", false);
 
     IntercordDebugger.subscribe((newStatus) => {
         setConnected(newStatus);
@@ -47,6 +49,7 @@ function Debugger(){
     return (
         <>
             <InformationRow style={{margin: 0}} label={"Debugger"} subLabel={"Connects to a debugger given its IP address and port. Consists of a very simple websocket connection, you can use any websocket client to connect to it."} />
+            <TableSwitchRow style={{marginTop: 16, padding: 2}} value={enabled} onValueChange={setEnabled} end={true} start={true} label={"Enable on startup"} subLabel={"Whether or not to enable the debugger when the app starts."} />
             <Card style={{padding: 16, marginTop: 16, marginBottom: 16}}>
                 <TextInput isDisabled={connected} value={address} onChange={setAddress} label={"Debugger Address"} description={"Remember to append the debugger port at the end of the address"} />
                 <Button style={{paddingTop: 16}} onPress={buttonPressed} text={connected ? "Disconnect" : "Connect"} variant={connected ? "destructive" : "primary"} />

@@ -51,6 +51,7 @@ export default class InterPatchedFunction{
     applyPatched(ctx, args, isConstructor = false){
         // We first run the prefixes
         const prefixData = this.runPrefixes(ctx, args);
+        args = prefixData.args;
 
         // If any of the prefixes overrides the original method, we return the override value
         if (!prefixData.runOriginal){

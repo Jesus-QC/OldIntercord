@@ -1,10 +1,10 @@
 import LazyModuleLoader from "../modules/LazyModuleLoader";
 import ModuleSearcher from "../modules/ModuleSearcher";
 import InterPatcher from "../patcher/InterPatcher";
-import LoadIntercordSettingsMenu from "./internal/IntercordSettingsManager";
 import SettingListBuilder from "./builders/SettingListBuilder";
 import SettingRowBuilder from "./builders/SettingRowBuilder";
 import CustomSettingListBuilder from "./builders/CustomSettingListBuilder";
+import LoadIntercordSettingsMenu from "./internal/IntercordSettingsManager";
 
 // All the available setting rows
 const settingRows = {};
@@ -44,10 +44,12 @@ export default class SettingsMenuManager {
             SettingsMenuManager.refreshRenderer()
 
             InterPatcher.addPostfix(settingsList, "getSettingListItems", (data) => {
+                const [settings] = data.args;
+
                 // We only want to modify the main settings list
                 // This is sadly the cleanest solution I could come up with
                 // If you have a better idea, please let me know
-                if (data.args[0][0].settings[0] !== "ACCOUNT")
+                if (!settings.some((setting) => setting.settings[0] === "LOGOUT"))
                     return;
 
                 data.returnValue = [

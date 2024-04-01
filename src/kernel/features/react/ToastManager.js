@@ -6,7 +6,7 @@ export default class ToastManager{
     static open(content, iconIdOrName){
         // We are lazy loading!
         // So we got to dispatch the event directly instead of using the helpers.
-        FluxDispatcher.dispatch({
+        return FluxDispatcher.dispatch({
             type: "TOAST_OPEN",
             toastProps: {
                 content: content,
@@ -21,7 +21,7 @@ export default class ToastManager{
 
     // Closes the active toast
     static close(){
-        FluxDispatcher.dispatch({
+        return FluxDispatcher.dispatch({
             type: "TOAST_CLOSE"
         })
     }

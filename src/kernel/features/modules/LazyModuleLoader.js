@@ -1,8 +1,10 @@
 import ModuleSearcher from "./ModuleSearcher";
 import ModuleLoader from "./ModuleLoader";
+import {ModulePathManager} from "./ModulePathManager";
 
 const waitingCallbacks = new Set();
 const waitingStoreCallbacks = new Set();
+const waitingPathCallbacks = new Set();
 let fluxConnected = false;
 
 // To handle modules, we just wait for the module to load
@@ -16,6 +18,18 @@ export function onFluxConnected(){
     fluxConnected = true;
     waitingStoreCallbacks.forEach(callback => {
         callback.callback(...callback.stores.map(store => ModuleSearcher.findByStore(store)));
+    });
+    waitingStoreCallbacks.clear();
+}
+
+export function onPathLoaded(path, id){
+    waitingPathCallbacks.forEach(callback => {
+        if (callback.path === path){
+            const module = ModuleLoader.getModuleById(id);
+            if (module === undefined) return;
+            callback.callback(module);
+            waitingPathCallbacks.delete(callback);
+        }
     });
 }
 
@@ -57,6 +71,13 @@ export default class LazyModuleLoader {
 
         waitingStoreCallbacks.add(new StoreWaitingCallback(callback, ...stores));
     }
+
+    // Waits for a module to be loaded by its path
+    static waitForModuleByPath(callback, path){
+        let module = ModulePathManager.getModuleByPath(path);
+        if (module) return callback(module);
+        waitingPathCallbacks.add(new PathWaitingCallback(callback, path));
+    }
 }
 
 
@@ -88,6 +109,13 @@ class ModuleWaitingCallback{
 class StoreWaitingCallback {
     constructor(callback, ...stores){
         this.stores = stores;
+        this.callback = callback;
+    }
+}
+
+class PathWaitingCallback {
+    constructor(callback, path){
+        this.path = path;
         this.callback = callback;
     }
 }

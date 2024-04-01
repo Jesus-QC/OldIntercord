@@ -31,6 +31,7 @@
 import {onModuleLoaded} from "./LazyModuleLoader";
 import CommonModules from "./CommonModules";
 import InterPatcher from "../patcher/InterPatcher";
+import {ModulePathManager} from "./ModulePathManager";
 
 // A useful handler for metro modules
 // Loads the modules and initializes them
@@ -51,6 +52,7 @@ export default class ModuleLoader{
             ModuleLoader.forbidIterations(rawModule);
         }
 
+        ModulePathManager.initialize();
         CommonModules.initialize()
     }
 
@@ -101,6 +103,7 @@ function addFactoryPostfix(id){
         return;
 
     InterPatcher.addPostfix(nativeModule, "factory", (_data) => {
+        ModulePathManager.onModuleLoaded(id);
         onModuleLoaded(id);
     });
 }
