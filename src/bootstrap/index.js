@@ -27,9 +27,6 @@ function objectCreateOverride(...params){
     // We finally restore the default implementation
     window.Object.create = createObjectDefault;
 
-    // We can now call some functions such as enabling react dev tools
-    if (window.enableDevTools) window.enableDevTools();
-
     // And we just return the native modules as if nothing happened ;)
     return defaultObjectCreate;
 }

@@ -12,7 +12,7 @@ export default class FileManager {
     }
 
     static writePersistentFile(relativePath, data){
-        ReactNative.NativeModules.RTNFileManager.writeFile("files", relativePath, data, "utf8").then((_) => {});
+        ReactNative.NativeModules.RTNFileManager.writeFile("documents", relativePath, data, "utf8").then((_) => {});
     }
 
     static readCacheFile(relativePath, callback){

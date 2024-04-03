@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build-prod": "node builders/kernel-builder.mjs",
-    "build-bootstrap": "esbuild src/bootstrap/index.js --minify --outdir=out/bootstrap"
+    "build-bootstrap": "esbuild src/bootstrap/index.js --minify --outdir=out/bootstrap",
+    "build-devtools": "esbuild src/devtools/index.js --minify --outdir=out/devtools"
   },
   "keywords": [],
   "author": "jesusqc",
