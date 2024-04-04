@@ -1,6 +1,5 @@
 import LazyModuleLoader from "../../../modules/LazyModuleLoader";
 import InterPatcher from "../../../patcher/InterPatcher";
-import ModuleSearcher from "../../../modules/ModuleSearcher";
 import ActionSheetManager from "../../../react/ActionSheetManager";
 import AssetManager from "../../../assets/AssetManager";
 import CommonComponents from "../../../react/components/CommonComponents";
@@ -14,47 +13,40 @@ export default class MessageLoggerPlugin {
         this.author = "@jesusqc"
         this.repo = ""; // TODO
         this.deletedMessages = new Map();
+        this.editedMessages = new Map();
     }
 
     load(){
         this.requiresRestart = true;
 
         LazyModuleLoader.waitForStores((messageStore) => {
-            InterPatcher.addPrefix(FluxDispatcher, "dispatch", (data) => {
-                const [args] = data.args;
+            this.handleFluxDispatch(messageStore)
+        }, "MessageStore")
 
-                if (args.type === "MESSAGE_UPDATE") this.handleMessageUpdate(messageStore, data);
-                else if (args.type === "MESSAGE_DELETE") this.handleMessageDelete(messageStore, data);
-                else if (args.type === "SHOW_ACTION_SHEET" && args.key === "MessageLongPressActionSheet") this.handleMessageSheet(data);
-            });
-
-            this.patchMessageRow();
-
-
-        }, "MessageStore", "ChannelStore")
-
-        LazyModuleLoader.waitForModuleByPath((module) => {
-            console.log("Omnicord, chat loaded!", module)
-        }, "components_native/chat/Messages.tsx");
+        LazyModuleLoader.waitForModuleByProps((module) => {
+            this.patchRowRenderer(module);
+        }, "MockChatManager");
     }
 
-    patchMessageRow(){
-        let deletedMessages = this.deletedMessages;
-        function checkArgs(data){
+    handleFluxDispatch(messageStore){
+        InterPatcher.addPrefix(FluxDispatcher, "dispatch", (data) => {
             const [args] = data.args;
-            if (args.rowType !== 1 || !args.message) return false;
-            return deletedMessages.has(args.message.id);
-        }
 
-        InterPatcher.addPrefix(ModuleSearcher.findByName("RowManager").prototype, "generate", (data) => {
-            if (!checkArgs(data)) return;
-            data.args[0].message.editedTimestamp = this.deletedMessages.get(data.args[0].message.id).editedTimestamp;
+            if (args.type === "MESSAGE_UPDATE") this.handleMessageUpdate(messageStore, data);
+            else if (args.type === "MESSAGE_DELETE") this.handleMessageDelete(messageStore, data);
+            else if (args.type === "SHOW_ACTION_SHEET" && args.key === "MessageLongPressActionSheet") this.handleMessageSheet(data);
         });
+    }
 
-        InterPatcher.addPostfix(ModuleSearcher.findByName("RowManager").prototype, "generate", (data) => {
-            if (!checkArgs(data)) return;
-            data.returnValue.backgroundHighlight = { backgroundColor: 553582750, gutterColor: 553648127 };
-        });
+    handleMessageUpdate(messageStore, data){
+        const args = data.args[0];
+        const message = messageStore.getMessage(args.message.channel_id, args.message.id);
+
+        if (!message || message.content === args.message.content) return;
+
+        if (!this.editedMessages.has(args.message.id)) this.editedMessages.set(args.message.id, []);
+
+        this.editedMessages.get(args.message.id).push(message.content);
     }
 
     handleMessageDelete(messageStore, data){
@@ -70,18 +62,58 @@ export default class MessageLoggerPlugin {
         if (!message) return;
 
         const deletedMessage = this.deletedMessages.get(args.id);
-        deletedMessage.editedTimestamp = message.editedTimestamp;
+        if (deletedMessage.edited === undefined) deletedMessage.edited = message.editedTimestamp !== null;
         deletedMessage.fluxCalls.push(args)
 
-        data.args = [{type: "MESSAGE_UPDATE", message: {...message, edited_timestamp: 0}}];
+        data.args = [{ type: "MESSAGE_UPDATE", message: { ...message, edited_timestamp: 0 } }];
     }
 
-    handleMessageUpdate(messageStore, data){
-        // const args = data.args[0];
-        // if (!args.message || args.message.type !== 0) return;
-        // if (args.message.edited_timestamp === 0) return;
-//
-        // const oldMessage = messageStore.getMessage(args.message.channel_id, args.message.id);
+    patchRowRenderer(module){
+        function getEdit(data, content, hideHeader = false){
+            return [{
+                ...data.args[0],
+                message: {
+                    ...data.args[0].message,
+                    content: [{type: "text", content: content}],
+                    textColor: -8289135,
+                    avatarUrl: hideHeader ? undefined : data.args[0].message._avatarUrl,
+                    timestamp: hideHeader ? undefined : data.args[0].message._timestamp,
+                    timestampColor: hideHeader ? undefined : data.args[0].message._timestampColor,
+                }
+            }]
+        }
+
+        // Handles removed messages
+        InterPatcher.addPrefix(module.default.prototype, "createRow", (data) => {
+            const [args] = data.args;
+
+            if (args.type !== 1 || !args.message) return;
+
+            if (this.editedMessages.has(args.message.id) && this.editedMessages.get(args.message.id).length > 0)
+            {
+                args.message._avatarUrl = args.message.avatarUrl; args.message._timestamp = args.message.timestamp; args.message._timestampColor = args.message.timestampColor;
+                args.message.avatarUrl = args.message.timestamp = args.message.timestampColor = undefined;
+            }
+
+            if (!this.deletedMessages.has(args.message.id)) return;
+
+            args.backgroundHighlight = { backgroundColor: 553582750 };
+            if (!this.deletedMessages.get(args.message.id).edited) args.message.edited = "";
+        });
+
+        // Handles edited messages
+        InterPatcher.addPostfix(module.default.prototype, "createRow", (data) => {
+            if (data.args[0].type !== 1 || !data.args[0].message) return;
+            if (!this.editedMessages.has(data.args[0].message.id)) return;
+
+            const editedMessages = this.editedMessages.get(data.args[0].message.id);
+
+            // Just in case, safety check
+            if (editedMessages.length === 0) return;
+            for (let i = editedMessages.length - 1; i >= 0; i--) {
+                data.originalMethod.apply(data.context, getEdit(data, editedMessages[i], i !== 0));
+            }
+        });
     }
 
     handleMessageSheet(data){
@@ -92,9 +124,7 @@ export default class MessageLoggerPlugin {
 
         function onDelete(id){
             deletedMessages.get(id).deleted = true;
-            for (const call of deletedMessages.get(id).fluxCalls){
-                FluxDispatcher.dispatch(call);
-            }
+            deletedMessages.get(id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
         }
 
         data.returnValue = ActionSheetManager.openActionSheet("MessageLoggerActionSheet", <MessageLoggerActionSheet onDelete={onDelete} message={args.content.props.message}/>);

@@ -1,5 +1,6 @@
 export default class PrefixData {
-    constructor(args, original){
+    constructor(context, args, original){
+        this.context = context;
         this.args = args;
         this.originalMethod = original;
         this.returnValue = undefined;

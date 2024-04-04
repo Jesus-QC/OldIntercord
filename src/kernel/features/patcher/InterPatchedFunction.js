@@ -28,13 +28,13 @@ export default class InterPatchedFunction{
     }
 
     runPrefixes(ctx, args){
-        const data = new PrefixData(args, this.original);
+        const data = new PrefixData(ctx, args, this.original);
         this.prefixes.forEach(prefix => prefix.method.apply(ctx, [data]));
         return data;
     }
 
     runPostfixes(ctx, args, value){
-        const data = new PostfixData(args, this.original, value);
+        const data = new PostfixData(ctx, args, this.original, value);
         this.postfixes.forEach(postfix => postfix.method.apply(ctx, [data]));
         return data;
     }

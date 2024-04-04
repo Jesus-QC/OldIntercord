@@ -21,10 +21,19 @@ export default class IntercordDebugger{
         IntercordDebugger.connected = false;
         IntercordDebugger.address = address;
         IntercordDebugger.socket = new WebSocket("ws://" + address);
-        IntercordDebugger.socket.onopen = () => { IntercordDebugger.onStatusUpdate(true); IntercordDebugger.connected = true;  }
+
+        IntercordDebugger.socket.onopen = () => {
+            IntercordDebugger.connected = true;
+            if (IntercordDebugger.onStatusUpdate) IntercordDebugger.onStatusUpdate(true);
+        }
+
         IntercordDebugger.socket.onmessage = (msg) => IntercordDebugger.onMessage(msg);
         IntercordDebugger.socket.onerror = (err) => { console.log("An error occurred while using the debugger: ", err) }
-        IntercordDebugger.socket.onclose = () => { IntercordDebugger.onStatusUpdate(false); IntercordDebugger.connected = false; }
+
+        IntercordDebugger.socket.onclose = () => {
+            IntercordDebugger.connected = false;
+            if (IntercordDebugger.onStatusUpdate) IntercordDebugger.onStatusUpdate(false);
+        }
     }
 
     static disconnect(){
