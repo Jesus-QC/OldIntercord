@@ -119,17 +119,25 @@ export default class MessageLoggerPlugin {
 
     handleMessageSheet(data){
         const args = data.args[0];
-        if (!args.content.props.message || !this.deletedMessages.has(args.content.props.message.id)) return;
+        if (!args.content.props.message) return;
+        if (this.deletedMessages.has(args.content.props.message.id)) {
+            const deletedMessages = this.deletedMessages;
 
-        const deletedMessages = this.deletedMessages;
+            function onDelete(id) {
+                deletedMessages.get(id).deleted = true;
+                deletedMessages.get(id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
+            }
 
-        function onDelete(id){
-            deletedMessages.get(id).deleted = true;
-            deletedMessages.get(id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
+            data.returnValue = ActionSheetManager.openActionSheet("MessageLoggerActionSheet", <MessageLoggerActionSheet onDelete={onDelete} message={args.content.props.message} />);
+            data.runOriginal = false;
         }
-
-        data.returnValue = ActionSheetManager.openActionSheet("MessageLoggerActionSheet", <MessageLoggerActionSheet onDelete={onDelete} message={args.content.props.message}/>);
-        data.runOriginal = false;
+        else if (this.editedMessages.has(args.content.props.message.id)) {
+            function onDelete(id) {
+                editedMessages.get(id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
+            }
+            data.returnValue = ActionSheetManager.openActionSheet("MessageLoggerActionSheet", <MessageLoggerActionSheet onDelete={onDelete} message={args.content.props.message} />);
+            data.runOriginal = false;
+        }
     }
 }
 
@@ -147,7 +155,7 @@ function MessageLoggerActionSheet({message, onDelete}){
                     ToastManager.info("Message text copied to clipboard.");
                     ActionSheetManager.closeActionSheet("MessageLoggerActionSheet");
                 }} start={true} end={false} icon={<TableRowIcon source={AssetManager.getAssetIdByName("CopyIcon")} />}/>
-                <ActionSheetRow label={"Delete Message"} onPress={() => {
+                <ActionSheetRow label={"Remove Message History"} onPress={() => {
                     onDelete(message.id)
                     ActionSheetManager.closeActionSheet("MessageLoggerActionSheet");
                 }} start={false} end={false} icon={<TableRowIcon source={AssetManager.getAssetIdByName("TrashIcon")} />} />
