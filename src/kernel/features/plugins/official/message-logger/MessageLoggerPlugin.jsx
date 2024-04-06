@@ -69,16 +69,17 @@ export default class MessageLoggerPlugin {
     }
 
     patchRowRenderer(module){
-        function getEdit(data, content, hideHeader = false){
+        function getEdit(data, content, firstMsg = false){
             return [{
                 ...data.args[0],
                 message: {
                     ...data.args[0].message,
                     content: [{type: "text", content: content}],
                     textColor: -8289135,
-                    avatarUrl: hideHeader ? undefined : data.args[0].message._avatarUrl,
-                    timestamp: hideHeader ? undefined : data.args[0].message._timestamp,
-                    timestampColor: hideHeader ? undefined : data.args[0].message._timestampColor,
+                    avatarUrl: !firstMsg ? undefined : data.args[0].message._avatarUrl,
+                    timestamp: !firstMsg ? undefined : data.args[0].message._timestamp,
+                    timestampColor: !firstMsg ? undefined : data.args[0].message._timestampColor,
+                    edited: firstMsg ? "" : data.args[0].message.edited
                 }
             }]
         }
@@ -97,7 +98,7 @@ export default class MessageLoggerPlugin {
 
             if (!this.deletedMessages.has(args.message.id)) return;
 
-            args.backgroundHighlight = { backgroundColor: 553582750 };
+            args.backgroundHighlight = { backgroundColor: 553582668 };
             if (!this.deletedMessages.get(args.message.id).edited) args.message.edited = "";
         });
 
@@ -111,7 +112,7 @@ export default class MessageLoggerPlugin {
             // Just in case, safety check
             if (editedMessages.length === 0) return;
             for (let i = editedMessages.length - 1; i >= 0; i--) {
-                data.originalMethod.apply(data.context, getEdit(data, editedMessages[i], i !== 0));
+                data.originalMethod.apply(data.context, getEdit(data, editedMessages[i], i === 0));
             }
         });
     }
@@ -133,10 +134,10 @@ export default class MessageLoggerPlugin {
 }
 
 function MessageLoggerActionSheet({message, onDelete}){
-    const ActionSheet = CommonComponents.getComponentByName("ActionSheet");
-    const ActionSheetContentContainer = CommonComponents.getComponentByName("ActionSheetContentContainer");
-    const ActionSheetRow = CommonComponents.getComponentByName("ActionSheetRow");
-    const TableRowIcon = CommonComponents.getComponentByName("TableRowIcon");
+    const ActionSheet = CommonComponents.getComponent("ActionSheet");
+    const ActionSheetContentContainer = CommonComponents.getComponent("ActionSheetContentContainer");
+    const ActionSheetRow = CommonComponents.getComponent("ActionSheetRow");
+    const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
 
     return (
         <ActionSheet>

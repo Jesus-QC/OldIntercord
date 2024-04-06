@@ -1,8 +1,8 @@
 import CommonComponents from "./CommonComponents";
 
 export default function RestartNeededAlertModal({onRestarting}){
-    const AlertModal = CommonComponents.getComponentByName("AlertModal");
-    const AlertActionButton = CommonComponents.getComponentByName("AlertActionButton");
+    const AlertModal = CommonComponents.getComponent("AlertModal");
+    const AlertActionButton = CommonComponents.getComponent("AlertActionButton");
 
     return (
         <AlertModal

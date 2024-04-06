@@ -7,7 +7,7 @@ export default class CommonModules{
         LazyModuleLoader.waitForModuleByProps((flux) => {
             window.Flux = flux;
             addFluxPostfix(flux);
-        }, "Flux", "Dispatcher");
+        }, "Store", "Dispatcher");
 
         LazyModuleLoader.waitForModuleByProps((react) => {
             window.React = react;

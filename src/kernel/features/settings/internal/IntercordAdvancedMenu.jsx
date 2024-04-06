@@ -38,16 +38,19 @@ function AdvancedMenu(){
 }
 
 function SnippetsPaster(){
-    const Card = CommonComponents.getComponentByName("Card");
-    const TextInput = CommonComponents.getComponentByName("TextInput");
-    const Button = CommonComponents.getComponentByName("Button");
+    const Card = CommonComponents.getComponent("Card");
+    const TextInput = CommonComponents.getComponent("TextField");
+    const Button = CommonComponents.getComponent("Button");
+    const Text = CommonComponents.getComponent("Text");
 
     const [snippet, setSnippet] = React.useState("1+1");
 
     return (
         <>
             <Card style={{padding: 16, margin: 16, marginBottom: 32, marginTop: 0}}>
-                <TextInput value={snippet} onChange={setSnippet} label={"Snippets"} description={"Unless you understand exactly what you are doing DO NOT PASTE ANYTHING HERE."} />
+                <Text style={{marginBottom: 8}} variant={"heading-md/bold"} color={"text-primary"}>Snippets</Text>
+                <TextInput value={snippet} onChange={setSnippet} />
+                <Text style={{marginTop: 8}} variant={"text-xs/medium"} color={"text-danger"}>Do not paste anything here without knowing what you are doing!</Text>
                 <Button style={{paddingTop: 16}} onPress={() => {
                     try {
                         ToastManager.info(IntercordLoader.executeCode(snippet));

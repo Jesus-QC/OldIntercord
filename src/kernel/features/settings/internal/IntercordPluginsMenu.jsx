@@ -12,21 +12,20 @@ export default function IntercordPluginsMenu(){
 }
 
 function RestartRequiredAlert(){
-    const Text = CommonComponents.getComponentByName("Text");
+    const TableRow = CommonComponents.getComponent("TableRow");
+    const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
 
     return (
-        <ReactNative.Pressable onPress={() => ReactNative.NativeModules.BundleUpdaterManager.reload()} style={{width: "100%", backgroundColor: ColorUtils.getColorByName("yellow-300"), padding: 8}}>
-            <Text style={{textAlign: "center"}} variant={"heading-md/extrabold"} color={"black"}>Restart Required</Text>
-            <Text style={{textAlign: "center"}} variant={"heading-sm/medium"} color={"black"}>Press here to restart and apply the changes</Text>
-        </ReactNative.Pressable>
+        <ReactNative.View style={{margin: 16, marginBottom: 0, backgroundColor: "#ED4245", padding: 3, borderRadius: 19}}>
+            <TableRow end={true} start={true} arrow={true} label={"Restart Required"} subLabel={"Press here to restart and apply the changes"} onPress={() => ReactNative.NativeModules.BundleUpdaterManager.reload()} icon={<TableRowIcon source={AssetManager.getAssetIdByName("ic_information_filled_24px")}/>} />
+        </ReactNative.View>
     )
 }
 
 let savedModifiedPlugins = [];
 
 function PluginsMenu(){
-    const Stack = CommonComponents.getComponentByName("Stack");
-    const TextInput = CommonComponents.getComponentByName("TextInput");
+    const TextInput = CommonComponents.getComponent("SearchField");
 
     const [modifiedPlugins, setModifiedPlugins] = React.useState(savedModifiedPlugins);
     const [plugins, setPlugins] = React.useState([]);
@@ -60,21 +59,21 @@ function PluginsMenu(){
         <>
             {modifiedPlugins.length > 0 && <RestartRequiredAlert/>}
             <ReactNative.ScrollView style={{padding: 16}}>
-                <TextInput value={search} onChange={setSearch} placeholder={"Search"} trailingIcon={ModuleSearcher.findByProps("MagnifyingGlassIcon").MagnifyingGlassIcon} />
-                <Stack spacing={12} style={{marginBottom: 32, marginTop: 16}}>
+                <TextInput value={search} onChange={setSearch} />
+                <ReactNative.View style={{marginBottom: 32, marginTop: 16, display: "flex", gap: 12}}>
                     {getPlugins()}
-                </Stack>
+                </ReactNative.View>
             </ReactNative.ScrollView>
         </>
     )
 }
 
 function PluginCard({plugin, onToggledPlugin}){
-    const TableSwitchRow = CommonComponents.getComponentByName("TableSwitchRow");
-    const TableRow = CommonComponents.getComponentByName("TableRow");
-    const TableRowIcon = CommonComponents.getComponentByName("TableRowIcon");
-    const Card = CommonComponents.getComponentByName("Card");
-    const Text = CommonComponents.getComponentByName("Text");
+    const TableRow = CommonComponents.getComponent("TableRow");
+    const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
+    const Card = CommonComponents.getComponent("Card");
+    const Text = CommonComponents.getComponent("Text");
+    const TableSwitchRow = CommonComponents.getComponent("ActionSheetSwitchRow");
 
     const [enabled, setEnabled] = useSetting(plugin.prefix, "enabled", false);
 
@@ -90,8 +89,8 @@ function PluginCard({plugin, onToggledPlugin}){
     }
 
     return (
-        <Card style={{padding: 0}}>
-            <TableSwitchRow value={enabled} onValueChange={onToggled} label={plugin.name} subLabel={`by ${plugin.author}`} start={true} end={true} />
+        <Card onPress={() => onToggled(!enabled)} style={{padding: 0}}>
+            <TableSwitchRow label={plugin.name} subLabel={`by ${plugin.author}`} start={true} end={true} value={enabled} onValueChange={onToggled} />
             <Text style={{marginRight: 12, marginLeft: 12, marginBottom: enabled ? 0 : 12}} variant={"text-xs/medium"} color={"text-primary"}>{plugin.description}</Text>
             {enabled && <TableRow onPress={() => ActionSheetManager.openActionSheet("plugin-config", <PluginConfigSheet plugin={plugin}/>)} arrow={true} icon={<TableRowIcon source={AssetManager.getAssetIdByName("SettingsIcon")} />} label={"Settings"} start={true} end={true} />}
         </Card>
@@ -99,11 +98,11 @@ function PluginCard({plugin, onToggledPlugin}){
 }
 
 function PluginConfigSheet({plugin}){
-    const ActionSheet = CommonComponents.getComponentByName("ActionSheet");
-    const ActionSheetTitleHeader = CommonComponents.getComponentByName("ActionSheetTitleHeader");
-    const ActionSheetContentContainer = CommonComponents.getComponentByName("ActionSheetContentContainer");
-    const ActionSheetRow = CommonComponents.getComponentByName("ActionSheetRow");
-    const TableRowIcon = CommonComponents.getComponentByName("TableRowIcon");
+    const ActionSheet = CommonComponents.getComponent("ActionSheet");
+    const ActionSheetTitleHeader = CommonComponents.getComponent("ActionSheetTitleHeader");
+    const ActionSheetContentContainer = CommonComponents.getComponent("ActionSheetContentContainer");
+    const ActionSheetRow = CommonComponents.getComponent("ActionSheetRow");
+    const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
 
     const avoidCustomSettings = !plugin.settings;
 

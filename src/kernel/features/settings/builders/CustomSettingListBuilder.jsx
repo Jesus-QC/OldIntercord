@@ -11,7 +11,7 @@ export default class CustomSettingListBuilder {
     }
 
     build() {
-        const SettingsList = CommonComponents.getComponentByName("SettingsList");
+        const SettingsList = CommonComponents.getComponent("SettingsList");
         return <SettingsList sections={this.sections} />;
     }
 }

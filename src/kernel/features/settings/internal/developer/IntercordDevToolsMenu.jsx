@@ -24,10 +24,11 @@ function DevToolsMenu(){
 }
 
 function Debugger(){
-    const Card = CommonComponents.getComponentByName("Card");
-    const TextInput = CommonComponents.getComponentByName("TextInput");
-    const Button = CommonComponents.getComponentByName("Button");
-    const TableSwitchRow = CommonComponents.getComponentByName("TableSwitchRow");
+    const Card = CommonComponents.getComponent("Card");
+    const TextInput = CommonComponents.getComponent("TextField");
+    const Button = CommonComponents.getComponent("Button");
+    const TableSwitchRow = CommonComponents.getComponent("ActionSheetSwitchRow");
+    const Text = CommonComponents.getComponent("Text");
 
     const [address, setAddress] = useSetting("intercord", "debuggerAddress", "10.0.2.2:8080");
     const [connected, setConnected] = React.useState(IntercordDebugger.connected);
@@ -51,7 +52,9 @@ function Debugger(){
             <InformationRow style={{margin: 0}} label={"Debugger"} subLabel={"Connects to a debugger given its IP address and port. Consists of a very simple websocket connection, you can use any websocket client to connect to it."} />
             <TableSwitchRow style={{marginTop: 16, padding: 2}} value={enabled} onValueChange={setEnabled} end={true} start={true} label={"Enable on startup"} subLabel={"Whether or not to enable the debugger when the app starts."} />
             <Card style={{padding: 16, marginTop: 16, marginBottom: 16}}>
-                <TextInput isDisabled={connected} value={address} onChange={setAddress} label={"Debugger Address"} description={"Remember to append the debugger port at the end of the address"} />
+                <Text style={{marginBottom: 8}} variant={"heading-md/bold"} color={"text-primary"}>Debugger Address</Text>
+                <TextInput isDisabled={connected} value={address} onChange={setAddress} />
+                <Text style={{marginTop: 8}} variant={"text-xs/medium"} color={"text-primary"}>Remember to append the debugger port at the end of the address</Text>
                 <Button style={{paddingTop: 16}} onPress={buttonPressed} text={connected ? "Disconnect" : "Connect"} variant={connected ? "destructive" : "primary"} />
             </Card>
         </>
@@ -59,10 +62,11 @@ function Debugger(){
 }
 
 function ReactDevTools(){
-    const Card = CommonComponents.getComponentByName("Card");
-    const TextInput = CommonComponents.getComponentByName("TextInput");
-    const Button = CommonComponents.getComponentByName("Button");
-    const TableSwitchRow = CommonComponents.getComponentByName("TableSwitchRow");
+    const Card = CommonComponents.getComponent("Card");
+    const TextInput = CommonComponents.getComponent("TextField");
+    const Button = CommonComponents.getComponent("Button");
+    const TableSwitchRow = CommonComponents.getComponent("ActionSheetSwitchRow");
+    const Text = CommonComponents.getComponent("Text");
 
     const [enabled, setEnabled] = useSetting("intercord", "reactDevToolsEnabled", false);
     const [address, setAddress] = React.useState("10.0.2.2:8097");
@@ -95,7 +99,9 @@ function ReactDevTools(){
             <InformationRow style={{margin: 0}} label={"Enable React Dev Tools"} subLabel={"Whether or not React Dev Tools should be loaded when the app starts."} />
             <TableSwitchRow style={{marginTop: 16, padding: 2}} value={enabled} onValueChange={onSwitched} end={true} start={true} label={"Enable React Dev Tools"} subLabel={"Whether or not React Dev Tools should be loaded when the app starts."} />
             <Card style={{padding: 16, marginTop: 16, marginBottom: 32}}>
-                <TextInput isDisabled={!enabled || connected} value={address} onChange={setAddress} label={"Dev Tools Address"} description={"Remember to append the port at the end of the address"} />
+                <Text style={{marginBottom: 8}} variant={"heading-md/bold"} color={"text-primary"}>Dev Tools Address</Text>
+                <TextInput isDisabled={!enabled || connected} value={address} onChange={setAddress} />
+                <Text style={{marginTop: 8}} variant={"text-xs/medium"} color={"text-primary"}>Remember to append the debugger port at the end of the address</Text>
                 <Button disabled={!enabled} style={{paddingTop: 16}} onPress={buttonPressed} text={connected ? "Disconnect" : "Connect"} variant={connected ? "destructive" : "primary"} />
             </Card>
         </>

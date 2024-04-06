@@ -11,10 +11,10 @@ export default function IntercordAssetManagerMenu() {
 }
 
 function AssetManagerMenu(){
-    const TableRow = CommonComponents.getComponentByName("TableRow");
-    const TableRowIcon = CommonComponents.getComponentByName("TableRowIcon");
-    const TextInput = CommonComponents.getComponentByName("TextInput");
-    const TableSwitchRow = CommonComponents.getComponentByName("TableSwitchRow");
+    const TableRow = CommonComponents.getComponent("TableRow");
+    const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
+    const SearchField = CommonComponents.getComponent("SearchField");
+    const TableSwitchRow = CommonComponents.getComponent("TableSwitchRow");
 
     const [search, setSearch] = React.useState("");
     const [assets, setAssets] = React.useState([]);
@@ -46,7 +46,7 @@ function AssetManagerMenu(){
         <>
             <InformationRow label={"Information"} subLabel={"Asset IDs change every time the app is reloaded. Assets are lazy, which means they are only loaded when they are needed, therefore not all assets are shown here."} />
             <ReactNative.View style={{marginRight: 16, marginLeft: 16}}>
-                <TextInput value={search} onChange={setSearch}  placeholder={"Search"} trailingIcon={ModuleSearcher.findByProps("MagnifyingGlassIcon").MagnifyingGlassIcon} />
+                <SearchField value={search} onChange={setSearch} />
             </ReactNative.View>
             <TableSwitchRow style={{padding: 2, margin: 16}} value={useIcons} onValueChange={setUseIcons} end={true} start={true} label={"Use Icons"} subLabel={"Whether or not it should display non colored icons instead of images."} />
             {getAssets()}
