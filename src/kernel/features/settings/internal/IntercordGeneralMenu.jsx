@@ -1,5 +1,4 @@
 import CustomSettingListBuilder from "../builders/CustomSettingListBuilder";
-import CommonComponents from "../../react/components/CommonComponents";
 import SettingsMenuManager from "../SettingsMenuManager";
 import RowBuilder from "../builders/SettingRowBuilder";
 import {useSetting} from "../../react/components/componentUtils";
