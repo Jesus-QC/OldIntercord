@@ -3,7 +3,6 @@ import InterPatcher from "../../../patcher/InterPatcher";
 import ActionSheetManager from "../../../react/ActionSheetManager";
 import AssetManager from "../../../assets/AssetManager";
 import CommonComponents from "../../../react/components/CommonComponents";
-import ToastManager from "../../../react/ToastManager";
 
 export default class MessageLoggerPlugin {
     constructor() {
@@ -26,6 +25,10 @@ export default class MessageLoggerPlugin {
         LazyModuleLoader.waitForModuleByProps((module) => {
             this.patchRowRenderer(module);
         }, "MockChatManager");
+
+        LazyModuleLoader.waitForModuleByPath((module) => {
+            this.patchMessageSheet(module);
+        }, "modules/action_sheet/native/components/LongPressMessageActionSheet.tsx");
     }
 
     handleFluxDispatch(messageStore){
@@ -34,7 +37,6 @@ export default class MessageLoggerPlugin {
 
             if (args.type === "MESSAGE_UPDATE") this.handleMessageUpdate(messageStore, data);
             else if (args.type === "MESSAGE_DELETE") this.handleMessageDelete(messageStore, data);
-            else if (args.type === "SHOW_ACTION_SHEET" && args.key === "MessageLongPressActionSheet") this.handleMessageSheet(data);
         });
     }
 
@@ -117,46 +119,62 @@ export default class MessageLoggerPlugin {
         });
     }
 
-    handleMessageSheet(data){
-        const args = data.args[0];
-        if (!args.content.props.message || !this.deletedMessages.has(args.content.props.message.id)) return;
+    patchMessageSheet(module){
+        InterPatcher.addPrefix(module, "default", (data) => {
+            const [args] = data.args;
+            if (!args.message || !this.deletedMessages.has(args.message.id)) return;
+            args.canAddNewReactions = false;
+        });
 
-        const deletedMessages = this.deletedMessages;
+        InterPatcher.addPostfix(module, "default", (data) => {
+            const [args] = data.args;
+            if (!args.message) return;
+            if (this.deletedMessages.has(args.message.id)) this.patchDeletedMessageSheet(data);
+            if (this.editedMessages.has(args.message.id)) this.patchEditedMessageSheet(data);
+        });
+    }
 
-        function onDelete(id){
-            deletedMessages.get(id).deleted = true;
-            deletedMessages.get(id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
+    patchEditedMessageSheet(data){
+        const editedMessages = this.editedMessages;
+        const actionRows =  data.returnValue.props.children.props.children.props.children;
+
+        function onEdit(message){
+            editedMessages.delete(message.id);
+            FluxDispatcher.dispatch({ type: "MESSAGE_UPDATE", message: { ...message, edited_timestamp: 1 } });
+            ActionSheetManager.closeActionSheet("MessageLongPressActionSheet");
         }
 
-        data.returnValue = ActionSheetManager.openActionSheet("MessageLoggerActionSheet", <MessageLoggerActionSheet onDelete={onDelete} message={args.content.props.message}/>);
-        data.runOriginal = false;
+        actionRows.unshift(<EditedMessageRow message={data.args[0].message} onDelete={onEdit} />)
+    }
+
+    patchDeletedMessageSheet(data){
+        const deletedMessages = this.deletedMessages;
+        const editedMessages = this.editedMessages;
+        const actionRows =  data.returnValue.props.children.props.children.props.children;
+
+        function onDelete(message){
+            deletedMessages.get(message.id).deleted = true;
+            deletedMessages.get(message.id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
+            deletedMessages.delete(message.id);
+            editedMessages.delete(message.id);
+            ActionSheetManager.closeActionSheet("MessageLongPressActionSheet");
+        }
+
+        const whitelist = [TranslatedMessages.COPY_TEXT, TranslatedMessages.DELETE_MESSAGE, TranslatedMessages.COPY_MESSAGE_LINK, TranslatedMessages.COPY_ID_MESSAGE];
+
+        for (let i = 0; i < actionRows.length; i++){
+            const child = actionRows[i];
+            if (!whitelist.includes(child.props.message)) actionRows.splice(i--, 1);
+            else if (child.props.message === TranslatedMessages.DELETE_MESSAGE) child.props.onPressRow = () => onDelete(data.args[0].message);
+        }
     }
 }
 
-function MessageLoggerActionSheet({message, onDelete}){
-    const ActionSheet = CommonComponents.getComponent("ActionSheet");
-    const ActionSheetContentContainer = CommonComponents.getComponent("ActionSheetContentContainer");
+function EditedMessageRow({message, onDelete}){
     const ActionSheetRow = CommonComponents.getComponent("ActionSheetRow");
     const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
 
     return (
-        <ActionSheet>
-            <ActionSheetContentContainer style={{padding: 16, marginBottom: 16}}>
-                <ActionSheetRow label={"Copy Text"} onPress={() => {
-                    ReactNative.Clipboard.setString(message.content);
-                    ToastManager.info("Message text copied to clipboard.");
-                    ActionSheetManager.closeActionSheet("MessageLoggerActionSheet");
-                }} start={true} end={false} icon={<TableRowIcon source={AssetManager.getAssetIdByName("CopyIcon")} />}/>
-                <ActionSheetRow label={"Delete Message"} onPress={() => {
-                    onDelete(message.id)
-                    ActionSheetManager.closeActionSheet("MessageLoggerActionSheet");
-                }} start={false} end={false} icon={<TableRowIcon source={AssetManager.getAssetIdByName("TrashIcon")} />} />
-                <ActionSheetRow label={"Copy Message ID"} onPress={() => {
-                    ReactNative.Clipboard.setString(message.id);
-                    ToastManager.info("Message ID copied to clipboard.");
-                    ActionSheetManager.closeActionSheet("MessageLoggerActionSheet");
-                }} start={false} end={true} icon={<TableRowIcon source={AssetManager.getAssetIdByName("IdIcon")} />} />
-            </ActionSheetContentContainer>
-        </ActionSheet>
+        <ActionSheetRow variant={"danger"} label={"Remove Edit History"} onPress={() => onDelete(message)} start={true} end={true} icon={<TableRowIcon variant={"danger"} source={AssetManager.getAssetIdByName("TrashIcon")} />} />
     )
 }

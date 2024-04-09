@@ -89,7 +89,7 @@ function PluginCard({plugin, onToggledPlugin}){
     }
 
     return (
-        <Card onPress={() => onToggled(!enabled)} style={{padding: 0}}>
+        <Card style={{padding: 0}}>
             <TableSwitchRow label={plugin.name} subLabel={`by ${plugin.author}`} start={true} end={true} value={enabled} onValueChange={onToggled} />
             <Text style={{marginRight: 12, marginLeft: 12, marginBottom: enabled ? 0 : 12}} variant={"text-xs/medium"} color={"text-primary"}>{plugin.description}</Text>
             {enabled && <TableRow onPress={() => ActionSheetManager.openActionSheet("plugin-config", <PluginConfigSheet plugin={plugin}/>)} arrow={true} icon={<TableRowIcon source={AssetManager.getAssetIdByName("SettingsIcon")} />} label={"Settings"} start={true} end={true} />}

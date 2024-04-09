@@ -14,7 +14,7 @@ function AssetManagerMenu(){
     const TableRow = CommonComponents.getComponent("TableRow");
     const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
     const SearchField = CommonComponents.getComponent("SearchField");
-    const TableSwitchRow = CommonComponents.getComponent("TableSwitchRow");
+    const TableSwitchRow = CommonComponents.getComponent("ActionSheetSwitchRow");
 
     const [search, setSearch] = React.useState("");
     const [assets, setAssets] = React.useState([]);

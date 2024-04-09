@@ -21,6 +21,10 @@ export default class CommonModules{
             window.ColorUtils = colorWrapper;
             window.ColorUtils.getColorByName = (name) => ColorUtils.ColorDetails[name].hex;
         }, "ColorDetails", "Color");
+
+        LazyModuleLoader.waitForModuleByProps((internationalization) => {
+            window.TranslatedMessages = internationalization;
+        }, "EDIT_MESSAGE")
     }
 }
 
