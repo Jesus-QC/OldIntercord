@@ -24,7 +24,11 @@ export default class CommonModules{
 
         LazyModuleLoader.waitForModuleByProps((internationalization) => {
             window.TranslatedMessages = internationalization;
-        }, "EDIT_MESSAGE")
+        }, "EDIT_MESSAGE");
+
+        LazyModuleLoader.waitForModuleByProps((chroma) => {
+            window.ChromaJS = chroma;
+        }, "Color", "hex");
     }
 }
 
