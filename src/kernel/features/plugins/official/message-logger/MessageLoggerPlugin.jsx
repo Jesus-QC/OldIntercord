@@ -44,7 +44,9 @@ export default class MessageLoggerPlugin {
         const args = data.args[0];
         const message = messageStore.getMessage(args.message.channel_id, args.message.id);
 
-        if (!message || message.content === args.message.content) return;
+        if (!message || args.message.edited_timestamp === undefined) return;
+
+        if (message.editedTimestamp === args.message.edited_timestamp) return;
 
         if (!this.editedMessages.has(args.message.id)) this.editedMessages.set(args.message.id, []);
 
@@ -144,7 +146,7 @@ export default class MessageLoggerPlugin {
             ActionSheetManager.closeActionSheet("MessageLongPressActionSheet");
         }
 
-        actionRows.unshift(<EditedMessageRow message={data.args[0].message} onDelete={onEdit} />)
+        actionRows.unshift(<CustomMessageRow label={"Remove Edit History"} onPress={() => onEdit(data.args[0].message)} variant={"danger"} icon={"TrashIcon"} />);
     }
 
     patchDeletedMessageSheet(data){
@@ -152,29 +154,38 @@ export default class MessageLoggerPlugin {
         const editedMessages = this.editedMessages;
         const actionRows =  data.returnValue.props.children.props.children.props.children;
 
-        function onDelete(message){
-            deletedMessages.get(message.id).deleted = true;
-            deletedMessages.get(message.id).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
-            deletedMessages.delete(message.id);
-            editedMessages.delete(message.id);
+        function onDelete(messageId){
+            deletedMessages.get(messageId).deleted = true;
+            deletedMessages.get(messageId).fluxCalls.forEach(call => FluxDispatcher.dispatch(call));
+            deletedMessages.delete(messageId);
+            editedMessages.delete(messageId);
             ActionSheetManager.closeActionSheet("MessageLongPressActionSheet");
         }
 
         const whitelist = [TranslatedMessages.COPY_TEXT, TranslatedMessages.DELETE_MESSAGE, TranslatedMessages.COPY_MESSAGE_LINK, TranslatedMessages.COPY_ID_MESSAGE];
+        let foundDelete = false;
 
         for (let i = 0; i < actionRows.length; i++){
             const child = actionRows[i];
             if (!whitelist.includes(child.props.message)) actionRows.splice(i--, 1);
-            else if (child.props.message === TranslatedMessages.DELETE_MESSAGE) child.props.onPressRow = () => onDelete(data.args[0].message);
+            else if (child.props.message === TranslatedMessages.DELETE_MESSAGE){
+                child.props.onPressRow = () => onDelete(data.args[0].message.id);
+                foundDelete = true; // For non-own messages
+            }
+        }
+
+        if (!foundDelete) {
+            actionRows.unshift(actionRows[0]);
+            actionRows[1] = <CustomMessageRow label={TranslatedMessages.DELETE_MESSAGE} onPress={() => onDelete(data.args[0].message.id)} icon={"TrashIcon"} />;
         }
     }
 }
 
-function EditedMessageRow({message, onDelete}){
+function CustomMessageRow({label, onPress, variant, icon}){
     const ActionSheetRow = CommonComponents.getComponent("ActionSheetRow");
     const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
 
     return (
-        <ActionSheetRow variant={"danger"} label={"Remove Edit History"} onPress={() => onDelete(message)} start={true} end={true} icon={<TableRowIcon variant={"danger"} source={AssetManager.getAssetIdByName("TrashIcon")} />} />
+        <ActionSheetRow variant={variant} label={label} onPress={onPress} icon={<TableRowIcon variant={variant} source={AssetManager.getAssetIdByName(icon)} />} />
     )
 }

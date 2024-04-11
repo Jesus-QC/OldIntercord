@@ -12,7 +12,7 @@ export default class CommonComponents {
     }
 
     // Gets a component by its name
-    static getComponent(name, onlyDefaultSearch = true, isolated = false) {
+    static getComponent(name, onlyDefaultSearch = true) {
         // Some components are not in the library, so we have to check if we have cached them
         if (CommonComponents[name]) return CommonComponents[name];
 
@@ -25,20 +25,6 @@ export default class CommonComponents {
         // If we don't find it, we try to return the component from ReactNative
         const rnModule = ReactNative[name];
         if (rnModule) return CommonComponents[name] = rnModule;
-
-        // If we don't find it, we return a fallback component
-        if (fallback) return CommonComponents.getComponent(fallback);
-
-        return CommonComponents.getFallback();
-    }
-
-    static getIsolated(name){
-        if (CommonComponents.Isolated[name]) return CommonComponents.Isolated[name];
-
-        const module = ModuleSearcher.findAllByProps(name);
-        for (const mod of module){
-            if (Object.keys(mod).length === 1) return CommonComponents.Isolated[name] = mod[name];
-        }
 
         return CommonComponents.getFallback();
     }
