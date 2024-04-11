@@ -62,6 +62,10 @@ IntercordPluginManager.officialPluginList = new Set([
     new MessageLoggerPlugin(),
     new NsfwBypassPlugin(),
     new UserTagsPlugin(),
+    new ViewRawPlugin(),
+    new MoreColorsPlugin(),
+    new BetterAudioPlugin(),
+    new ReleaseUpdaterPlugin(),
 ]);
 
 IntercordPluginManager.enabledPlugins = new Map();
