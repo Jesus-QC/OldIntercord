@@ -29,7 +29,7 @@ export default class ToastManager{
     // Some helper functions
 
     static info(content){
-        ToastManager.open(content, "ic_info_24px");
+        return ToastManager.open(content, "ic_info_24px");
     }
 }
 

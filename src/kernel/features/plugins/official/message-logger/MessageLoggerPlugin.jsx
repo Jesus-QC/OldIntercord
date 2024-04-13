@@ -4,6 +4,7 @@ import ActionSheetManager from "../../../react/ActionSheetManager";
 import AssetManager from "../../../assets/AssetManager";
 import CommonComponents from "../../../react/components/CommonComponents";
 
+// TODO: recode everything
 export default class MessageLoggerPlugin {
     constructor() {
         this.prefix = "message-logger";
@@ -29,6 +30,15 @@ export default class MessageLoggerPlugin {
         LazyModuleLoader.waitForModuleByPath((module) => {
             this.patchMessageSheet(module);
         }, "modules/action_sheet/native/components/LongPressMessageActionSheet.tsx");
+
+        LazyModuleLoader.waitForModuleByProps((embedSanitizer) => {
+            InterPatcher.addPrefix(embedSanitizer, "sanitizeEmbed", (data) => {
+                console.log("intere",data.args[2])
+                if (!data.args[2].updated) return;
+                data.returnValue = data.args[2];
+                data.runOriginal = false;
+            });
+        }, "sanitizeEmbed");
     }
 
     handleFluxDispatch(messageStore){
@@ -42,19 +52,24 @@ export default class MessageLoggerPlugin {
 
     handleMessageUpdate(messageStore, data){
         const args = data.args[0];
+
         const message = messageStore.getMessage(args.message.channel_id, args.message.id);
+        if (!message) return;
 
-        if (!message || args.message.edited_timestamp === undefined) return;
+        const timestamp = args.message.edited_timestamp;
+        if (!timestamp) return;
 
-        if (message.editedTimestamp === args.message.edited_timestamp) return;
+        if (message.editedTimestamp === timestamp || timestamp === 1) return;
 
         if (!this.editedMessages.has(args.message.id)) this.editedMessages.set(args.message.id, []);
-
         this.editedMessages.get(args.message.id).push(message.content);
     }
 
     handleMessageDelete(messageStore, data){
         const args = data.args[0];
+
+        const message = messageStore.getMessage(args.channelId, args.id);
+        if (!message) return;
 
         if (this.deletedMessages.has(args.id)) {
             if (this.deletedMessages.get(args.id).deleted) return;
@@ -62,13 +77,11 @@ export default class MessageLoggerPlugin {
             this.deletedMessages.set(args.id, {fluxCalls:[]});
         }
 
-        const message = messageStore.getMessage(args.channelId, args.id);
-        if (!message) return;
-
         const deletedMessage = this.deletedMessages.get(args.id);
         if (deletedMessage.edited === undefined) deletedMessage.edited = message.editedTimestamp !== null;
         deletedMessage.fluxCalls.push(args)
 
+        for (let i = 0; i < message.embeds?.length; i++) message.embeds[i].updated = true;
         data.args = [{ type: "MESSAGE_UPDATE", message: { ...message, edited_timestamp: 0 } }];
     }
 
@@ -142,6 +155,7 @@ export default class MessageLoggerPlugin {
 
         function onEdit(message){
             editedMessages.delete(message.id);
+            for (let i = 0; i < message.embeds?.length; i++) message.embeds[i].updated = true;
             FluxDispatcher.dispatch({ type: "MESSAGE_UPDATE", message: { ...message, edited_timestamp: 1 } });
             ActionSheetManager.closeActionSheet("MessageLongPressActionSheet");
         }
