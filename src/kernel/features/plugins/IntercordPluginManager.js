@@ -3,6 +3,7 @@ import ExperimentsPlugin from "./official/experiments/ExperimentsPlugin";
 import NsfwBypassPlugin from "./official/nsfw-bypass/NsfwBypassPlugin";
 import MessageLoggerPlugin from "./official/message-logger/MessageLoggerPlugin";
 import UserTagsPlugin from "./official/user-tags/UserTagsPlugin";
+import MessageLoggerPluginR from "./official/message-logger/MessageLoggerPluginR";
 
 export default class IntercordPluginManager{
     static initialize(){

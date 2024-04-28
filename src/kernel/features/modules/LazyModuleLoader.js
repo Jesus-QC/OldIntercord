@@ -60,7 +60,13 @@ export default class LazyModuleLoader {
     static waitForModuleByProps(callback, ...props){
         let module = ModuleSearcher.findByProps(...props);
         if (module) return callback(module);
-        waitingCallbacks.add(new ModuleWaitingCallback(callback, undefined, undefined, undefined, undefined, ...props));
+        waitingCallbacks.add(new ModuleWaitingCallback(callback, undefined, undefined, undefined, false, ...props));
+    }
+
+    static waitForModuleByPropsAdvanced(callback, ...props){
+        let module = ModuleSearcher.findByPropsAdvanced(...props);
+        if (module) return callback(module);
+        waitingCallbacks.add(new ModuleWaitingCallback(callback, undefined, undefined, undefined, true, ...props));
     }
 
     // Waits for stores to be loaded, can load multiple stores
@@ -82,11 +88,11 @@ export default class LazyModuleLoader {
 
 
 class ModuleWaitingCallback{
-    constructor(callback, name, displayName, type, store, ...props){
+    constructor(callback, name, displayName, type, advancedProps, ...props){
         this.name = name;
         this.displayName = displayName;
         this.type = type;
-        this.store = store;
+        this.advanced = advancedProps;
         this.props = props;
         this.callback = callback;
     }
@@ -96,7 +102,7 @@ class ModuleWaitingCallback{
 
         if (module === undefined) return;
 
-        if (this.props.length !== 0 && !ModuleSearcher.filterByProps(...this.props)(module)) return;
+        if (this.props.length !== 0 && (this.advanced ? !ModuleSearcher.filterByPropsAdvanced(...this.props)(module) : !ModuleSearcher.filterByProps(...this.props)(module))) return;
         if (this.name !== undefined && !ModuleSearcher.filterByName(this.name)(module)) return;
         if (this.displayName !== undefined && !ModuleSearcher.filterByDisplayName(this.displayName)(module)) return;
         if (this.type !== undefined && !ModuleSearcher.filterByType(this.type)(module)) return;

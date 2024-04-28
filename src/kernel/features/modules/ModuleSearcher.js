@@ -57,6 +57,10 @@ export default class ModuleSearcher{
         return ModuleSearcher.getModuleIdWhere(ModuleSearcher.filterByProps(...props));
     }
 
+    static findByPropsAdvanced(...props){
+        return ModuleSearcher.getModuleWhere(ModuleSearcher.filterByPropsAdvanced(...props));
+    }
+
     // Finds the first module that has the specified store name
     // For more info about flux stores, check out the following links:
     // https://facebookarchive.github.io/flux/docs/flux-utils#store
@@ -187,6 +191,23 @@ export default class ModuleSearcher{
     static filterByProps(...props){
         /// We check if all the props are defined in the module
         return module => props.every(prop => module[prop]);
+    }
+
+    static filterByPropsAdvanced(...props){
+        /// We check if all the props are defined in the module
+        return module => props.every(prop =>
+            {
+                const separatedProps = prop.split(".");
+                let temp = module;
+
+                for (let i = 0; i < separatedProps.length; i++){
+                    temp = temp[separatedProps[i]];
+                    if (temp === undefined || temp === null) return false;
+                }
+
+                return true;
+            }
+        );
     }
 
     static filterByStore(name){

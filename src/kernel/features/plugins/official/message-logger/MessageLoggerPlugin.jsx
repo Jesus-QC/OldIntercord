@@ -33,7 +33,6 @@ export default class MessageLoggerPlugin {
 
         LazyModuleLoader.waitForModuleByProps((embedSanitizer) => {
             InterPatcher.addPrefix(embedSanitizer, "sanitizeEmbed", (data) => {
-                console.log("intere",data.args[2])
                 if (!data.args[2].updated) return;
                 data.returnValue = data.args[2];
                 data.runOriginal = false;
@@ -62,7 +61,8 @@ export default class MessageLoggerPlugin {
         if (message.editedTimestamp === timestamp || timestamp === 1) return;
 
         if (!this.editedMessages.has(args.message.id)) this.editedMessages.set(args.message.id, []);
-        this.editedMessages.get(args.message.id).push(message.content);
+
+        this.editedMessages.get(args.message.id).push(ModuleSearcher.findByProps("createMessageRecord").createMessageRecord(message));
     }
 
     handleMessageDelete(messageStore, data){
@@ -91,13 +91,14 @@ export default class MessageLoggerPlugin {
                 ...data.args[0],
                 message: {
                     ...data.args[0].message,
-                    content: [{type: "text", content: content}],
-                    textColor: -8289135,
+                    // TODO: save embeds and shit
+                    content: [{type: "text", content: content.content}],
                     avatarUrl: !firstMsg ? undefined : data.args[0].message._avatarUrl,
                     timestamp: !firstMsg ? undefined : data.args[0].message._timestamp,
                     timestampColor: !firstMsg ? undefined : data.args[0].message._timestampColor,
                     edited: firstMsg ? "" : data.args[0].message.edited
-                }
+                },
+                backgroundHighlight: { backgroundColor: 545818760 }
             }]
         }
 

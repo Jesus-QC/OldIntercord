@@ -99,7 +99,7 @@ function PluginCard({plugin, onToggledPlugin}){
 
 function PluginConfigSheet({plugin}){
     const ActionSheet = CommonComponents.getComponent("ActionSheet");
-    const ActionSheetTitleHeader = CommonComponents.getComponent("ActionSheetTitleHeader");
+    const ActionSheetTitleHeader = CommonComponents.getComponent("BottomSheetTitleHeader");
     const ActionSheetContentContainer = CommonComponents.getComponent("ActionSheetContentContainer");
     const ActionSheetRow = CommonComponents.getComponent("ActionSheetRow");
     const TableRowIcon = CommonComponents.getComponent("TableRowIcon");
@@ -109,10 +109,8 @@ function PluginConfigSheet({plugin}){
     return (
         <ActionSheet>
             <ActionSheetTitleHeader title={plugin.name} subtitle={`by ${plugin.author}`} />
-            <ActionSheetContentContainer style={{padding: 16, marginBottom: 16}}>
-                {!avoidCustomSettings && plugin.settings()}
-                <ActionSheetRow style={{marginTop: avoidCustomSettings ? 0 : 16, padding: 0}} label={"Source code"} subLabel={"Check the source code on GitHub."} onPress={() => ReactNative.Linking.openURL(plugin.repo)} arrow={true} start={true} end={true} icon={<TableRowIcon source={AssetManager.getAssetIdByName("img_account_sync_github_white")} />} />
-            </ActionSheetContentContainer>
+            {!avoidCustomSettings && plugin.settings()}
+            <ActionSheetRow style={{marginTop: avoidCustomSettings ? 0 : 16, padding: 0}} label={"Source code"} subLabel={"Check the source code on GitHub."} onPress={() => ReactNative.Linking.openURL(plugin.repo)} arrow={true} start={true} end={true} icon={<TableRowIcon source={AssetManager.getAssetIdByName("img_account_sync_github_white")} />} />
         </ActionSheet>
     );
 }

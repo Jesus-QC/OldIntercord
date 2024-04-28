@@ -1,5 +1,5 @@
 export default class SettingListBuilder{
-    constructor(label) {
+    constructor(label = undefined) {
         this.label = label;
         this.panels = [];
     }
@@ -8,7 +8,7 @@ export default class SettingListBuilder{
         this.panels = panels;
         return this;
     }
-
+    
     build() {
         return {
             label: this.label,
